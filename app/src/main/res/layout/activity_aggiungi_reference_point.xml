@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_aggiungi_reference_point"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.example.alessandrorappini.way.Interazione.AggiungiReferencePoint">
+
+        <TextView
+            android:text="Seleziona l'edificio"
+            android:textSize="24sp"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/textView"
+            android:textColor="@android:color/black" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/spinnerRP"
+             />
+
+
+
+        <Button
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Esci"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="80dp"
+            android:layout_gravity="center_horizontal"
+            android:onClick="esci"/>
+    </LinearLayout>
+</ScrollView>

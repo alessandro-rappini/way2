@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_menu_interazione"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.example.alessandrorappini.way.Interazione.MenuInterazione">
+
+        <Button
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Aggiungi edificio"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center_horizontal"
+            android:onClick="aggiungiEdificio"/>
+
+        <Button
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Aggiungi ReferencePoint"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_horizontal"
+            android:onClick="aggiungiReferencePoint"/>
+
+        <Button
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Aggiungi rilevazioni"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_horizontal"
+            android:onClick="aggiungiRilevazioni"/>
+
+        <Button
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Esci"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_horizontal"
+            android:onClick="esci"/>
+
+    </LinearLayout>
+</ScrollView>

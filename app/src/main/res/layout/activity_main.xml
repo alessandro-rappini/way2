@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.example.alessandrorappini.way.MainActivity">
+
+        <Button
+            android:onClick="localizzati"
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Localizzati"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <Button
+            android:onClick="interagisci"
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Interagisci"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center_horizontal"
+            />
+
+
+    </LinearLayout>
+</ScrollView>

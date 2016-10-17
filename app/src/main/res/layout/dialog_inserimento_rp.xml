@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:minWidth="300dp"
+        android:minHeight="400dp">
+        android:weightSum="1">
+
+        <EditText
+            android:layout_marginTop="80dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_user"
+            android:layout_gravity="center_horizontal"
+            android:hint="Inserisci Reference Point"/>
+
+
+        <Button
+            android:layout_width="80dip"
+            android:layout_height="40dip"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="10dp"
+            android:text="Inserisci"
+            android:id="@+id/btn_inserisci"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <Button
+            android:layout_width="80dip"
+            android:layout_height="40dip"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="25dp"
+            android:text="Esci"
+            android:id="@+id/btn_nascondiDialog"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/txtERR"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+</RelativeLayout>
