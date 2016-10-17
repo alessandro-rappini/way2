@@ -8,7 +8,7 @@ import android.view.View;
 import com.example.alessandrorappini.way.Interazione.MenuInterazione;
 
 public class MainActivity extends AppCompatActivity {
-
+    //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
