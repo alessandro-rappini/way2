@@ -3,6 +3,7 @@ package com.example.alessandrorappini.way;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.example.alessandrorappini.way.Interazione.MenuInterazione;
@@ -16,8 +17,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void localizzati (View view){
-        Intent intent = new Intent(this , MenuInterazione.class);
-        startActivity(intent);
+        Log.i("info" , " nulla");
     }
 
     public void interagisci (View view){

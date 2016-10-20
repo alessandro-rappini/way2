@@ -11,7 +11,7 @@
         tools:context="com.example.alessandrorappini.way.Interazione.AggiungiReferencePoint">
 
         <TextView
-            android:text="Seleziona l'edificio"
+            android:text="Seleziona un edificio"
             android:textSize="24sp"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
@@ -28,7 +28,16 @@
             android:id="@+id/spinnerRP"
              />
 
-
+        <Button
+            android:layout_width="200dip"
+            android:layout_height="50dip"
+            android:textSize="20sp"
+            android:text="Inserisci reference point"
+            android:gravity="center"
+            android:background="@android:color/holo_green_dark"
+            android:layout_marginTop="80dp"
+            android:layout_gravity="center_horizontal"
+            android:onClick="carica"/>
 
         <Button
             android:layout_width="200dip"
@@ -37,7 +46,7 @@
             android:text="Esci"
             android:gravity="center"
             android:background="@android:color/holo_green_dark"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="50dp"
             android:layout_gravity="center_horizontal"
             android:onClick="esci"/>
     </LinearLayout>

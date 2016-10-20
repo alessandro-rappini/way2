@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +39,7 @@ public class AggiungiReferencePoint extends AppCompatActivity {
     int lunghezzaArray;
 
     //spinner
+    Spinner sp;
     String[] spinnerArray;
     HashMap<String,String> spinnerMap = new HashMap<String, String>();
     private ArrayAdapter<String> spinnerAdapter;
@@ -83,7 +83,6 @@ public class AggiungiReferencePoint extends AppCompatActivity {
             try {
                 int risp = json.getInt("successo");
                 if (risp == 1) {
-                    // setto dentro a piatti l'array di json
                     edifici = json.getJSONArray("edificio");
 
                     Log.i("Server ", "---------");
@@ -109,7 +108,7 @@ public class AggiungiReferencePoint extends AppCompatActivity {
                     }
                 } else {
                     err="si";
-                    Log.i("info" , "non sono presenti prodotti");
+                    Log.i("info" , "non sono presenti edifici");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -128,30 +127,46 @@ public class AggiungiReferencePoint extends AppCompatActivity {
     }
 
     private void popolaSpinner() {
-        final Spinner sp=(Spinner) findViewById(R.id.spinnerRP);
+        sp=(Spinner) findViewById(R.id.spinnerRP);
         ArrayAdapter<String> adapter =new ArrayAdapter<String>(this ,android.R.layout.simple_spinner_item, spinnerArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
-
+        /*
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String name = sp.getSelectedItem().toString();
-                String id = spinnerMap.get(name);
-                String key = (String) getKeyFromValue(spinnerMap, name);
-                Log.i("chiave" , key);
-
-                if(spinnerPrimo){
-                    spinnerPrimo = false;
+                if(i==0){
+                    Log.i("info","******************");
+                    Log.i("info","******************");
+                    Log.i("info","******************");
                 }else {
-                    visualizzaDialog(key , name);
+                    String name = sp.getSelectedItem().toString();
+                    String id = spinnerMap.get(name);
+                    String key = (String) getKeyFromValue(spinnerMap, name);
+                    Log.i("chiave" , key);
+
+                    if(spinnerPrimo){
+                        spinnerPrimo = false;
+                    }else {
+                        visualizzaDialog(key , name);
+                    }
                 }
+
             }
 
             public void onNothingSelected(AdapterView<?> adapterView) {
                 return;
             }
-        });
+        });*/
+    }
+
+    public void carica (View view){
+        //int i = sp.getSelectedItemPosition();
+        String name = sp.getSelectedItem().toString();
+        String id = spinnerMap.get(name);
+        String key = (String) getKeyFromValue(spinnerMap, name);
+        Log.i("chiave" , key);
+        visualizzaDialog(key , name);
+
     }
 
     private void visualizzaDialog(final String key, final String name) {
