@@ -31,5 +31,10 @@ public class MenuInterazione extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void aggiungiRilevazioni (View view){
+        Intent intent = new Intent(this , AggiungiMisurazioni.class);
+        startActivity(intent);
+    }
+
 
 }

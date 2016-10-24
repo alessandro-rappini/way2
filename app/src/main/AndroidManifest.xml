@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".Interazione.MenuInterazione" />
         <activity android:name=".Interazione.AggiungiEdificio" />
-        <activity android:name=".Interazione.AggiungiReferencePoint"></activity>
+        <activity android:name=".Interazione.AggiungiReferencePoint" />
+        <activity android:name=".Interazione.AggiungiMisurazioni"></activity>
     </application>
 
 </manifest>

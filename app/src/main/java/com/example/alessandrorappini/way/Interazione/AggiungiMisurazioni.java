@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -28,25 +26,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.alessandrorappini.way.R.layout.dialog_inserimento_rp;
+import static com.example.alessandrorappini.way.R.id.spinnerEdificio;
+import static com.example.alessandrorappini.way.R.id.spinnerRP;
 import static com.example.alessandrorappini.way.Utilities.Utilities.getKeyFromValue;
 
-public class AggiungiReferencePoint extends AppCompatActivity {
+public class AggiungiMisurazioni extends AppCompatActivity {
 
     JSONParser jsonParser = new JSONParser();
     JSONArray edifici = null;
+    JSONArray rpRisp = null;
     String err = "no";
     int lunghezzaArray;
 
     //spinner
-    Spinner sp;
-    String[] spinnerArray;
-    HashMap<String,String> spinnerMap = new HashMap<String, String>();
+    Spinner sp , spRp;
+    String[] spinnerArrayEdifici , spinnerArrayEdificiRp;
+    HashMap<String,String> spinnerMapEdifici = new HashMap<String, String>();
     private ArrayAdapter<String> spinnerAdapter;
     boolean spinnerPrimo = true;
 
     //global
-    String keyIns , nameIns;
+    String  nameSelezionato;
     Boolean errDialog = false;
     //istanzia l'oggetto dialogo
     static Dialog dialog = null;
@@ -54,19 +54,13 @@ public class AggiungiReferencePoint extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aggiungi_reference_point);
+        setContentView(R.layout.activity_aggiungi_misurazioni);
 
         new popolaEdifici().execute();
     }
 
-
-
     class popolaEdifici extends AsyncTask<String, String, String> {
         protected String doInBackground(String... args) {
-            //controllo il risultato
-            Log.i("Server ", "---------");
-            Log.i("Server ", "dentro");
-            Log.i("Server ", "---------");
 
             //creo la lista di valori
             List<NameValuePair> valori = new ArrayList<NameValuePair>();
@@ -84,13 +78,9 @@ public class AggiungiReferencePoint extends AppCompatActivity {
                 int risp = json.getInt("successo");
                 if (risp == 1) {
                     edifici = json.getJSONArray("edificio");
-
-                    Log.i("Server ", "---------");
-                    Log.i("Server ", "lunghezza array " + edifici.length());
                     lunghezzaArray = edifici.length();
-                    Log.i("Server ", "---------");
+                    spinnerArrayEdifici = new String[edifici.length()];
 
-                    spinnerArray = new String[edifici.length()];
                     for (int i = 0; i < edifici.length(); i++) {
                         //prendo il json i-esimo lo decodifico e lo metto detro a temp
                         JSONObject temp = edifici.getJSONObject(i);
@@ -99,12 +89,9 @@ public class AggiungiReferencePoint extends AppCompatActivity {
 
                         JSONObject reader = new JSONObject(id);
                         String idEdicio = reader.getString("$id");
-                        Log.i(" idEdicio" ,idEdicio);
                         String nome = temp.getString("nome");
-                        Log.i(" nome Edicio" , nome);
-
-                        spinnerMap.put(idEdicio ,nome);
-                        spinnerArray[i] = nome;
+                        spinnerMapEdifici.put(idEdicio ,nome);
+                        spinnerArrayEdifici[i] = nome;
                     }
                 } else {
                     err="si";
@@ -117,101 +104,88 @@ public class AggiungiReferencePoint extends AppCompatActivity {
         }
         protected void onPostExecute(String file_url) {
             if(err=="si"){
-                Toast.makeText(AggiungiReferencePoint.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
+                Toast.makeText(AggiungiMisurazioni.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
                 thread.start();
             }else {
                 popolaSpinner();
+                new popolaReferencePoint().execute();
             }
         }
-
     }
 
     private void popolaSpinner() {
-        sp=(Spinner) findViewById(R.id.spinnerRP);
-        ArrayAdapter<String> adapter =new ArrayAdapter<String>(this ,android.R.layout.simple_spinner_item, spinnerArray);
+        sp=(Spinner) findViewById(spinnerEdificio);
+        ArrayAdapter<String> adapter =new ArrayAdapter<String>(this ,android.R.layout.simple_spinner_item, spinnerArrayEdifici);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
-    }
+        nameSelezionato = sp.getSelectedItem().toString();
 
-    public void carica (View view){
-        //int i = sp.getSelectedItemPosition();
-        String name = sp.getSelectedItem().toString();
-        String id = spinnerMap.get(name);
-        String key = (String) getKeyFromValue(spinnerMap, name);
-        Log.i("chiave" , key);
-        visualizzaDialog(key , name);
-
-    }
-
-    private void visualizzaDialog(final String key, final String name) {
-        dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setContentView(dialog_inserimento_rp);
-
-        Button dialogEsci = (Button) dialog.findViewById(R.id.btn_nascondiDialog);
-        dialogEsci.setOnClickListener(new View.OnClickListener() {
+        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                nameSelezionato = sp.getSelectedItem().toString();
+                new popolaReferencePoint().execute();
             }
-        });
 
-
-
-        Button bottone = (Button) dialog.findViewById(R.id.btn_inserisci);
-        bottone.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                EditText eMail=(EditText)dialog.findViewById(R.id.edit_user);
-                nameIns=eMail.getText().toString();
-                keyIns = key;
-                new inserisciRP().execute();
-                ;
-            }
+            public void onNothingSelected(AdapterView<?> parentView) {}
+
         });
-        dialog.show();
     }
 
-    private class inserisciRP extends AsyncTask<String, String, String> {
+    class popolaReferencePoint extends AsyncTask<String, String, String> {
         protected String doInBackground(String... args) {
-            //creo la lista con tutti i parametri
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("id", keyIns));
-            params.add(new BasicNameValuePair("nome", nameIns));
+
+            //creo la lista di valori
+            List<NameValuePair> valori = new ArrayList<NameValuePair>();
+
+            String key = (String) getKeyFromValue(spinnerMapEdifici, nameSelezionato);
+            valori.add(new BasicNameValuePair("key", key));
 
             // creo il path
             Setpath setpath =new Setpath();
             String path = setpath.getPath();
-            String url = path+"inserisciReferencePoint.php";
-
+            String url = path+"getReferencePoint.php";
             // svolgo la chiamata
-            JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(url, "POST", valori);
             //controllo il risultato
             Log.d("Server ", json.toString());
-            try {
-                int success = json.getInt("successo");
-                if (success != 1) {
-                    errDialog = true;
+           try {
+                int risp = json.getInt("successo");
+                if (risp == 1) {
+                    rpRisp = json.getJSONArray("value");
+                    int lung = rpRisp.length();
+                    spinnerArrayEdificiRp = new String[lung];
+                    for (int i = 0; i < rpRisp.length(); i++) {
+                        String nome = rpRisp.get(i).toString();
+                        spinnerArrayEdificiRp[i] = nome;
+                        }
+                } else {
+                    err="si";
+                    Log.i("info" , "non sono presenti edifici");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
+
             return null;
         }
         protected void onPostExecute(String file_url) {
-            dialog.dismiss();
-            if(errDialog == false){
-                Toast tea = Toast.makeText(getApplicationContext(), "Reference point inserito correttamente", Toast.LENGTH_LONG);
-                tea.show();
-                threadCambio.start();
+            if(err=="si"){
+                Toast.makeText(AggiungiMisurazioni.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
+                thread.start();
             }else {
-                Toast tea = Toast.makeText(getApplicationContext(), "Errore inserimento reference point", Toast.LENGTH_LONG);
-                tea.show();
-                threadCambio.start();
+                popolaSpinnerRp();
             }
         }
+    }
+
+    private void popolaSpinnerRp() {
+        spRp=(Spinner) findViewById(spinnerRP);
+        ArrayAdapter<String> adapter =new ArrayAdapter<String>(this ,android.R.layout.simple_spinner_item, spinnerArrayEdificiRp);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spRp.setAdapter(adapter);
     }
 
     Thread thread = new Thread(){
@@ -219,20 +193,7 @@ public class AggiungiReferencePoint extends AppCompatActivity {
         public void run() {
             try {
                 Thread.sleep(500);
-                AggiungiReferencePoint.this.finish();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    Thread threadCambio = new Thread(){
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(500);
-                Intent intent = new Intent(getApplicationContext() , MenuInterazione.class);
-                startActivity(intent);
+                AggiungiMisurazioni.this.finish();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -242,5 +203,10 @@ public class AggiungiReferencePoint extends AppCompatActivity {
     public void esci (View view){
         Intent intent = new Intent(this , MenuInterazione.class);
         startActivity(intent);
+    }
+
+
+    public void start (View view){
+        Log.i("nulla" , "nulla");
     }
 }

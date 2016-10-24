@@ -1,5 +1,4 @@
 package com.example.alessandrorappini.way.Server;
-
 /**
  * Classe creata per avere un punto di accesso univerase
  * al path al fine di cambiarlo nella maniera più semplice
@@ -12,11 +11,13 @@ public class Setpath {
      *
      */
     //static String path = "http://localhost:8080/way/";
-    // static String path = "http://localhost/way/";
-    //static String path = "http://192.168.1.1:8080/way/";
+    static String path = "http://192.168.137.1:8080/way/";
+
+
+   // static String path = "http://192.168.0.70:8080/way/";
 
     //!!!!!!!!!!            LOCALE
-    static String path = "http://10.0.2.2:8080/way/";
+    //static String path = "http://10.0.2.2:8080/way/";
     //!!!!!!!!!!            LOCALE
 
 
