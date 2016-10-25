@@ -10,11 +10,14 @@ public class Setpath {
      * path per settare la connessione con i file php
      *
      */
-    //static String path = "http://localhost:8080/way/";
-    static String path = "http://192.168.137.1:8080/way/";
 
+    //!!!!!!! connesso alla stessa rete
+    static String path = "http://192.168.1.20:8080/way/";
+    //!!!!!!! connesso alla stessa rete
 
-   // static String path = "http://192.168.0.70:8080/way/";
+    //!!!!!!!!!!             hotspot
+    //static String path = "http://192.168.137.1:8080/way/";
+    //!!!!!!!!!!             hotspot
 
     //!!!!!!!!!!            LOCALE
     //static String path = "http://10.0.2.2:8080/way/";

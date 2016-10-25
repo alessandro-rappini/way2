@@ -1,7 +1,13 @@
 package com.example.alessandrorappini.way.Interazione;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +15,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.alessandrorappini.way.R;
 import com.example.alessandrorappini.way.Server.JSONParser;
 import com.example.alessandrorappini.way.Server.Setpath;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -38,25 +49,78 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     String err = "no";
     int lunghezzaArray;
 
+    WifiManager  wifi;
+    String wifis[];
+    WifiScanReceiver wifiReciever;
+
+
+
     //spinner
-    Spinner sp , spRp;
-    String[] spinnerArrayEdifici , spinnerArrayEdificiRp;
-    HashMap<String,String> spinnerMapEdifici = new HashMap<String, String>();
+    Spinner sp, spRp;
+    String[] spinnerArrayEdifici, spinnerArrayEdificiRp;
+    HashMap<String, String> spinnerMapEdifici = new HashMap<String, String>();
     private ArrayAdapter<String> spinnerAdapter;
     boolean spinnerPrimo = true;
 
     //global
-    String  nameSelezionato;
+    String nameSelezionato;
     Boolean errDialog = false;
     //istanzia l'oggetto dialogo
     static Dialog dialog = null;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiungi_misurazioni);
 
+        wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
+        wifiReciever = new WifiScanReceiver();
+
         new popolaEdifici().execute();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("AggiungiMisurazioni Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 
     class popolaEdifici extends AsyncTask<String, String, String> {
@@ -66,9 +130,9 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             List<NameValuePair> valori = new ArrayList<NameValuePair>();
             valori.add(new BasicNameValuePair("nome", "nome"));
             // creo il path
-            Setpath setpath =new Setpath();
+            Setpath setpath = new Setpath();
             String path = setpath.getPath();
-            String url = path+"getNomeEdifici.php";
+            String url = path + "getNomeEdifici.php";
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", valori);
             //controllo il risultato
@@ -90,23 +154,24 @@ public class AggiungiMisurazioni extends AppCompatActivity {
                         JSONObject reader = new JSONObject(id);
                         String idEdicio = reader.getString("$id");
                         String nome = temp.getString("nome");
-                        spinnerMapEdifici.put(idEdicio ,nome);
+                        spinnerMapEdifici.put(idEdicio, nome);
                         spinnerArrayEdifici[i] = nome;
                     }
                 } else {
-                    err="si";
-                    Log.i("info" , "non sono presenti edifici");
+                    err = "si";
+                    Log.i("info", "non sono presenti edifici");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;
         }
+
         protected void onPostExecute(String file_url) {
-            if(err=="si"){
+            if (err == "si") {
                 Toast.makeText(AggiungiMisurazioni.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
                 thread.start();
-            }else {
+            } else {
                 popolaSpinner();
                 new popolaReferencePoint().execute();
             }
@@ -114,8 +179,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     }
 
     private void popolaSpinner() {
-        sp=(Spinner) findViewById(spinnerEdificio);
-        ArrayAdapter<String> adapter =new ArrayAdapter<String>(this ,android.R.layout.simple_spinner_item, spinnerArrayEdifici);
+        sp = (Spinner) findViewById(spinnerEdificio);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArrayEdifici);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
         nameSelezionato = sp.getSelectedItem().toString();
@@ -128,7 +193,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
 
         });
     }
@@ -143,26 +209,27 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             valori.add(new BasicNameValuePair("key", key));
 
             // creo il path
-            Setpath setpath =new Setpath();
+            Setpath setpath = new Setpath();
             String path = setpath.getPath();
-            String url = path+"getReferencePoint.php";
+            String url = path + "getReferencePoint.php";
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", valori);
             //controllo il risultato
             Log.d("Server ", json.toString());
-           try {
+            try {
                 int risp = json.getInt("successo");
                 if (risp == 1) {
                     rpRisp = json.getJSONArray("value");
                     int lung = rpRisp.length();
+
                     spinnerArrayEdificiRp = new String[lung];
                     for (int i = 0; i < rpRisp.length(); i++) {
                         String nome = rpRisp.get(i).toString();
                         spinnerArrayEdificiRp[i] = nome;
-                        }
+                    }
                 } else {
-                    err="si";
-                    Log.i("info" , "non sono presenti edifici");
+                    err = "si";
+                    Log.i("info", "non sono presenti edifici");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -171,24 +238,25 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
             return null;
         }
+
         protected void onPostExecute(String file_url) {
-            if(err=="si"){
+            if (err == "si") {
                 Toast.makeText(AggiungiMisurazioni.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
                 thread.start();
-            }else {
+            } else {
                 popolaSpinnerRp();
             }
         }
     }
 
     private void popolaSpinnerRp() {
-        spRp=(Spinner) findViewById(spinnerRP);
-        ArrayAdapter<String> adapter =new ArrayAdapter<String>(this ,android.R.layout.simple_spinner_item, spinnerArrayEdificiRp);
+        spRp = (Spinner) findViewById(spinnerRP);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArrayEdificiRp);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRp.setAdapter(adapter);
     }
 
-    Thread thread = new Thread(){
+    Thread thread = new Thread() {
         @Override
         public void run() {
             try {
@@ -200,13 +268,47 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         }
     };
 
-    public void esci (View view){
-        Intent intent = new Intent(this , MenuInterazione.class);
+    public void esci(View view) {
+        Intent intent = new Intent(this, MenuInterazione.class);
         startActivity(intent);
     }
 
 
-    public void start (View view){
-        Log.i("nulla" , "nulla");
+    public void start(View view) {
+        final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);
+        if (checkBoxWIFI.isChecked()) {
+            wifi.startScan();
+        }
+    }
+
+
+    protected void onPause() {
+        unregisterReceiver(wifiReciever);
+        super.onPause();
+    }
+
+    protected void onResume() {
+        registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        super.onResume();
+    }
+
+    private class WifiScanReceiver extends BroadcastReceiver {
+        public void onReceive(Context c, Intent intent) {
+            List<ScanResult> wifiScanList = wifi.getScanResults();
+
+            Log.i("INFO" , "4");
+
+            Log.i("INFO" , "LUNGHEZZA");
+            wifis = new String[wifiScanList.size()];
+            Log.i("INFO" , wifiScanList.size() +"");
+            for(int i = 0; i < wifiScanList.size(); i++){
+                Log.i("INFO" , (wifiScanList.get(i)).toString());
+                //wifis[i] = ((wifiScanList.get(i)).toString());
+            }
+            //lv.setAdapter(new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,wifis));
+        }
     }
 }
+
+
+
