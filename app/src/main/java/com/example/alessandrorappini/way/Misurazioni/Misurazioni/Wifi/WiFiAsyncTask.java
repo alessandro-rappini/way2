@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiObj;
 
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ public  class WiFiAsyncTask extends AsyncTask<Void, Void , Void>  {
     String wifis[];
     WifiScanReceiver wifiReciever;
     WifiObj oby;
+    WifiCheif cc;
     LinkedList <WifiObj> listParziale;
 
     Context con = null;
@@ -47,6 +49,7 @@ public  class WiFiAsyncTask extends AsyncTask<Void, Void , Void>  {
 
     protected void onPostExecute(Void result){
         Log.i("info" , " onPostExecute");
+
         AggiungiMisurazioni.inserisciCheif(listParziale);
     }
 
@@ -81,6 +84,5 @@ public  class WiFiAsyncTask extends AsyncTask<Void, Void , Void>  {
             }
         }
     }
-
 
 }

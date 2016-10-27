@@ -9,12 +9,14 @@ public class WifiObj {
     String ssid;
     String bssid;
     int rssi;
+    int varianzaRssi;
 
 
     public WifiObj(String ssid, String bssid, int rssi) {
         this.ssid = ssid;
         this.bssid = bssid;
         this.rssi = rssi;
+        varianzaRssi =0;
         }
 
     public String getSsid() {
@@ -28,4 +30,10 @@ public class WifiObj {
     public int getRssi() {
         return rssi;
     }
+
+    public int varianzaRssi() {
+        return rssi;
+    }
+
+
 }

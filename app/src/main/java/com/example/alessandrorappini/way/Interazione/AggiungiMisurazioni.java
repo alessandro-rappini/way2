@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WiFiAsyncTask;
+import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.R;
 import com.example.alessandrorappini.way.Server.JSONParser;
@@ -85,7 +86,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         //wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
         //wifiReciever = new WifiScanReceiver();
         mySpinner=(Spinner) findViewById(R.id.spinnerNum);
-        cheifWifi = new WifiCheif();
+        //cheifWifi = new WifiCheif();                            ***********************************************************
         new popolaEdifici().execute();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -127,6 +128,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+
 
     class popolaEdifici extends AsyncTask<String, String, String> {
         protected String doInBackground(String... args) {
@@ -284,7 +287,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
         final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);
         if (checkBoxWIFI.isChecked()) {
-            WifiCheif cheifWifi = new WifiCheif();
+            cheifWifi = new WifiCheif(precisione);
             for ( int  t = 0 ; t < precisione ; t++){
                 Context con = getApplicationContext();
                 Intent inte = getIntent();
@@ -297,9 +300,12 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     public static void inserisciCheif (LinkedList lista){
         Log.i("inserisci" , "inserisci dentro");
         cheifWifi.inserisci(lista);
+        cheifWifi.controlla();
     }
 
-
+    public static void scopatta() {
+        WifiAlgo.inizia(cheifWifi);
+    }
 }
 
 
