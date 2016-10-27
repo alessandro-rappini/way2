@@ -1,4 +1,4 @@
-package com.example.alessandrorappini.way.Oggetti;
+package com.example.alessandrorappini.way.Oggetti.Wifi;
 
 /**
  * Created by Alessandro Rappini on 25/10/2016.

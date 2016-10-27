@@ -15,7 +15,8 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.alessandrorappini.way.Misurazioni.WiFi;
+import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WiFiAsyncTask;
+import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.R;
 import com.example.alessandrorappini.way.Server.JSONParser;
 import com.example.alessandrorappini.way.Server.Setpath;
@@ -32,6 +33,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.example.alessandrorappini.way.R.id.spinnerEdificio;
@@ -40,12 +42,15 @@ import static com.example.alessandrorappini.way.Utilities.Utilities.getKeyFromVa
 
 public class AggiungiMisurazioni extends AppCompatActivity {
 
+
+
     JSONParser jsonParser = new JSONParser();
     JSONArray edifici = null;
     JSONArray rpRisp = null;
     String err = "no";
     int lunghezzaArray;
 
+    static WifiCheif cheifWifi;
    // WifiManager  wifi;
     //String wifis[];
     //WifiScanReceiver wifiReciever;
@@ -53,7 +58,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
 
     //spinner
-    Spinner sp, spRp;
+    Spinner sp, spRp , mySpinner;
     String[] spinnerArrayEdifici, spinnerArrayEdificiRp;
     HashMap<String, String> spinnerMapEdifici = new HashMap<String, String>();
     private ArrayAdapter<String> spinnerAdapter;
@@ -64,6 +69,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     Boolean errDialog = false;
     //istanzia l'oggetto dialogo
     static Dialog dialog = null;
+
+    int precisione;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -77,7 +84,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
         //wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
         //wifiReciever = new WifiScanReceiver();
-
+        mySpinner=(Spinner) findViewById(R.id.spinnerNum);
+        cheifWifi = new WifiCheif();
         new popolaEdifici().execute();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -272,18 +280,26 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
 
     public void start(View view) {
-        Spinner mySpinner=(Spinner) findViewById(R.id.spinnerNum);
-        int precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
+
+        precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
         final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);
         if (checkBoxWIFI.isChecked()) {
+            WifiCheif cheifWifi = new WifiCheif();
             for ( int  t = 0 ; t < precisione ; t++){
                 Context con = getApplicationContext();
                 Intent inte = getIntent();
-                WiFi asyncTask =  new WiFi(con , inte);
+                WiFiAsyncTask asyncTask =  new WiFiAsyncTask(con , inte);
                 asyncTask.execute();
             }
         }
     }
+
+    public static void inserisciCheif (LinkedList lista){
+        Log.i("inserisci" , "inserisci dentro");
+        cheifWifi.inserisci(lista);
+    }
+
+
 }
 
 

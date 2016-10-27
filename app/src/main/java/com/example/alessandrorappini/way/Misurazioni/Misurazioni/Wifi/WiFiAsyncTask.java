@@ -1,4 +1,4 @@
-package com.example.alessandrorappini.way.Misurazioni;
+package com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,29 +8,34 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Oggetti.Wifi.WifiObj;
+
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Alessandro Rappini on 25/10/2016.
  */
 
-public  class WiFi   extends AsyncTask<Void, Void , Void>  {
+public  class WiFiAsyncTask extends AsyncTask<Void, Void , Void>  {
     WifiManager  wifi;
     String wifis[];
     WifiScanReceiver wifiReciever;
+    WifiObj oby;
+    LinkedList <WifiObj> listParziale;
 
     Context con = null;
     Intent inte = null;
 
-    public WiFi(Context c, Intent i){
+    public WiFiAsyncTask(Context c, Intent i){
         con = c ;
         inte = i;
     }
 
     protected void onPreExecute(){
         Log.i("info" , " onPreExecute");
-        Log.i("info" , "------------------ "  );
-        Log.i("info" , " "  );
+        listParziale = new <WifiObj>  LinkedList ();
     }
 
     @Override
@@ -42,8 +47,7 @@ public  class WiFi   extends AsyncTask<Void, Void , Void>  {
 
     protected void onPostExecute(Void result){
         Log.i("info" , " onPostExecute");
-        Log.i("info" , "------------------ "  );
-        Log.i("info" , " "  );Log.i("info" , " "  );Log.i("info" , " "  );Log.i("info" , " "  );Log.i("info" , " "  );Log.i("info" , " "  );
+        AggiungiMisurazioni.inserisciCheif(listParziale);
     }
 
 
@@ -72,6 +76,8 @@ public  class WiFi   extends AsyncTask<Void, Void , Void>  {
                 Log.i("info" , "------------------ "  );
                 Log.i("info" , " "  );
                // Log.i("INFO" , (wifiScanList.get(i)).toString());
+                oby = new WifiObj(ssid , bssid , rssi);
+                listParziale.add(oby);
             }
         }
     }
