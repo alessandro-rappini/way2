@@ -1,13 +1,9 @@
 package com.example.alessandrorappini.way.Interazione;
 
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.alessandrorappini.way.Misurazioni.WiFi;
 import com.example.alessandrorappini.way.R;
 import com.example.alessandrorappini.way.Server.JSONParser;
 import com.example.alessandrorappini.way.Server.Setpath;
@@ -49,9 +46,9 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     String err = "no";
     int lunghezzaArray;
 
-    WifiManager  wifi;
-    String wifis[];
-    WifiScanReceiver wifiReciever;
+   // WifiManager  wifi;
+    //String wifis[];
+    //WifiScanReceiver wifiReciever;
 
 
 
@@ -78,8 +75,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiungi_misurazioni);
 
-        wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
-        wifiReciever = new WifiScanReceiver();
+        //wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
+        //wifiReciever = new WifiScanReceiver();
 
         new popolaEdifici().execute();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -275,37 +272,16 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
 
     public void start(View view) {
+        Spinner mySpinner=(Spinner) findViewById(R.id.spinnerNum);
+        int precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
         final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);
         if (checkBoxWIFI.isChecked()) {
-            wifi.startScan();
-        }
-    }
-
-
-    protected void onPause() {
-        unregisterReceiver(wifiReciever);
-        super.onPause();
-    }
-
-    protected void onResume() {
-        registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        super.onResume();
-    }
-
-    private class WifiScanReceiver extends BroadcastReceiver {
-        public void onReceive(Context c, Intent intent) {
-            List<ScanResult> wifiScanList = wifi.getScanResults();
-
-            Log.i("INFO" , "4");
-
-            Log.i("INFO" , "LUNGHEZZA");
-            wifis = new String[wifiScanList.size()];
-            Log.i("INFO" , wifiScanList.size() +"");
-            for(int i = 0; i < wifiScanList.size(); i++){
-                Log.i("INFO" , (wifiScanList.get(i)).toString());
-                //wifis[i] = ((wifiScanList.get(i)).toString());
+            for ( int  t = 0 ; t < precisione ; t++){
+                Context con = getApplicationContext();
+                Intent inte = getIntent();
+                WiFi asyncTask =  new WiFi(con , inte);
+                asyncTask.execute();
             }
-            //lv.setAdapter(new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,wifis));
         }
     }
 }
