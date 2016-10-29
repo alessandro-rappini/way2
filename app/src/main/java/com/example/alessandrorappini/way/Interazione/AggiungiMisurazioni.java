@@ -44,7 +44,7 @@ import static com.example.alessandrorappini.way.Utilities.Utilities.getKeyFromVa
 public class AggiungiMisurazioni extends AppCompatActivity {
 
 
-
+    public static String edificio , rpSelezionato;
     JSONParser jsonParser = new JSONParser();
     JSONArray edifici = null;
     JSONArray rpRisp = null;
@@ -55,8 +55,6 @@ public class AggiungiMisurazioni extends AppCompatActivity {
    // WifiManager  wifi;
     //String wifis[];
     //WifiScanReceiver wifiReciever;
-
-
 
     //spinner
     Spinner sp, spRp , mySpinner;
@@ -71,7 +69,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     //istanzia l'oggetto dialogo
     static Dialog dialog = null;
 
-    int precisione;
+    public static int precisione;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -262,6 +260,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArrayEdificiRp);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRp.setAdapter(adapter);
+
+
     }
 
     Thread thread = new Thread() {
@@ -283,6 +283,10 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
 
     public void start(View view) {
+        //edificio selezionato al momento dello strart
+        edificio = (String) getKeyFromValue(spinnerMapEdifici, nameSelezionato);
+        //
+        rpSelezionato = spRp.getSelectedItem().toString();
 
         precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
         final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);

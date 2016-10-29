@@ -113,4 +113,7 @@ public class AggiungiEdificio extends AppCompatActivity {
         };
 
     }
+
+    public class inserisciMisurazioniWifi {
+    }
 }
