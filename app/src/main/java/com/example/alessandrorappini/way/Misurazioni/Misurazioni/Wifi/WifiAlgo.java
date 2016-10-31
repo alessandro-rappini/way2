@@ -2,6 +2,7 @@ package com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
@@ -28,6 +29,7 @@ public class WifiAlgo {
     static int position ;
     private static String edificio , rpSelezionato , so , nomeDevice , precisione;
     public  static JSONParser jsonParser = new JSONParser();
+    public static int controllo = 0;
 
 
     public static void inizia(WifiCheif cheifWifi) {
@@ -73,18 +75,20 @@ public class WifiAlgo {
     }
 
     private static void calcolaMediaVarianza() {
-        for (int i=0 ; i<totale.size() ; i++) {
-            WifiObj appoggio = totale.get(i);
-            appoggio.eseguiCalcoliRssi();
-        }
-
         edificio = AggiungiMisurazioni.edificio;
         rpSelezionato =  AggiungiMisurazioni.rpSelezionato;
         so = Utilities.so();
         nomeDevice = Utilities.getDeviceName();
         precisione = String.valueOf(AggiungiMisurazioni.precisione) ;
 
-       // new inserisciMisurazioniWifi().execute();
+        for (int i=0 ; i<totale.size() ; i++) {
+            WifiObj appoggio = totale.get(i);
+            appoggio.eseguiCalcoliRssi();
+            String rssid = String.valueOf(appoggio.getRssi()) ;
+
+            new inserisciMisurazioniWifi(appoggio.getSsid() , appoggio.getBssid() , rssid).execute();
+        }
+
     }
     ///////////////////WORK IN PROGRESS///////////////////////////////////
     ///////////////////WORK IN PROGRESS///////////////////////////////////
@@ -92,29 +96,43 @@ public class WifiAlgo {
     ///////////////////WORK IN PROGRESS///////////////////////////////////
     ///////////////////WORK IN PROGRESS///////////////////////////////////
     private static class inserisciMisurazioniWifi extends AsyncTask<String, String, String> {
+        String ssid , bssid , rssid;
+
+        public inserisciMisurazioniWifi(String ssid, String bssid, String rssid) {
+            this.ssid = ssid;
+            this.bssid = bssid;
+            this.rssid = rssid;
+        }
 
 
         protected String doInBackground(String... args) {
 
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("nome", "nome"));
+            params.add(new BasicNameValuePair("id", edificio));
+            params.add(new BasicNameValuePair("rp", rpSelezionato));
+            params.add(new BasicNameValuePair("ssid", ssid));
+            params.add(new BasicNameValuePair("bssid", bssid));
+            params.add(new BasicNameValuePair("rssid", rssid));
+            params.add(new BasicNameValuePair("so", so));
+            params.add(new BasicNameValuePair("nomeDevice", nomeDevice));
+            params.add(new BasicNameValuePair("precisione", precisione));
 
             // creo il path
             Setpath setpath =new Setpath();
             String path = setpath.getPath();
-            String url = path+"inserimentoEdificio.php";
+            String url = path+"inserimentoWifi.php";
 
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
             //controllo il risultato
-            Log.d("Server ", json.toString());
+            //Log.d("Server ", json.toString());
             try {
                 int successo = json.getInt("successo");
                 if (successo == 1) {
                     Log.i("info","INSERITO");
-                } else   {
-                    Log.i("info","Record già presnte");
+                } else {
+                    Log.i("info","ERRORE");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -124,13 +142,29 @@ public class WifiAlgo {
 
         protected void doInBackground(){
 
+
         }
 
         protected void onPostExecute(String file_url) {
-
+            finito();
         }
 
 
+        public synchronized void finito(){
+            controllo = controllo + 1;
+            if(controllo == totale.size()){
+                Log.i("********","********");
+                Log.i("finito","ABBIAMO SBANCATO");
+                Log.i("********","********");
+
+                Toast.makeText( AggiungiMisurazioni.con, "Inseriento avvenuto con successo", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
+
+
+
+
 
 }

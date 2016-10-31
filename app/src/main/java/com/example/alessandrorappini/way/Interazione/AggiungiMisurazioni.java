@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     JSONArray edifici = null;
     JSONArray rpRisp = null;
     String err = "no";
+    String errNum = "no";
     int lunghezzaArray;
 
     static WifiCheif cheifWifi;
@@ -56,12 +58,14 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     //String wifis[];
     //WifiScanReceiver wifiReciever;
 
+    public static Context con;
+
     //spinner
     Spinner sp, spRp , mySpinner;
     String[] spinnerArrayEdifici, spinnerArrayEdificiRp;
     HashMap<String, String> spinnerMapEdifici = new HashMap<String, String>();
     private ArrayAdapter<String> spinnerAdapter;
-    boolean spinnerPrimo = true;
+    Button buttonStart ;
 
     //global
     String nameSelezionato;
@@ -80,7 +84,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiungi_misurazioni);
-
+        buttonStart = (Button) findViewById(R.id.btnStart) ;
         //wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
         //wifiReciever = new WifiScanReceiver();
         mySpinner=(Spinner) findViewById(R.id.spinnerNum);
@@ -130,6 +134,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
 
     class popolaEdifici extends AsyncTask<String, String, String> {
+
         protected String doInBackground(String... args) {
 
             //creo la lista di valori
@@ -231,9 +236,17 @@ public class AggiungiMisurazioni extends AppCompatActivity {
                     spinnerArrayEdificiRp = new String[lung];
                     for (int i = 0; i < rpRisp.length(); i++) {
                         String nome = rpRisp.get(i).toString();
+                        nome = nome.substring(9);
+
                         spinnerArrayEdificiRp[i] = nome;
                     }
-                } else {
+                } else if(risp == 35){
+                    Log.i("******" , "*****");
+                    Log.i("35" , "35");
+                    Log.i("******" , "*****");
+                    errNum="si";
+
+                } else{
                     err = "si";
                     Log.i("info", "non sono presenti edifici");
                 }
@@ -246,11 +259,17 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         }
 
         protected void onPostExecute(String file_url) {
-            if (err == "si") {
-                Toast.makeText(AggiungiMisurazioni.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
-                thread.start();
-            } else {
-                popolaSpinnerRp();
+            if(errNum=="si"){
+                Toast.makeText( AggiungiMisurazioni.this, "Non ci sono reference point per questo edificio!!! INSERISCINE UNO", Toast.LENGTH_LONG).show();
+                spRp.setEnabled(false);
+                buttonStart.setEnabled(false);
+            }else {
+                if (err == "si") {
+                    Toast.makeText(AggiungiMisurazioni.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
+                    thread.start();
+                } else {
+                    popolaSpinnerRp();
+                }
             }
         }
     }
@@ -293,7 +312,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         if (checkBoxWIFI.isChecked()) {
             cheifWifi = new WifiCheif(precisione);
             for ( int  t = 0 ; t < precisione ; t++){
-                Context con = getApplicationContext();
+                con = getApplicationContext();
                 Intent inte = getIntent();
                 WiFiAsyncTask asyncTask =  new WiFiAsyncTask(con , inte);
                 asyncTask.execute();

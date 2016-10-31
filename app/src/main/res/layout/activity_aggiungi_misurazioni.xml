@@ -108,7 +108,8 @@
             android:background="@android:color/holo_green_dark"
             android:layout_marginTop="80dp"
             android:layout_gravity="center_horizontal"
-            android:onClick="start"/>
+            android:onClick="start"
+            android:id="@+id/btnStart" />
 
         <Button
             android:layout_width="200dip"
