@@ -109,17 +109,22 @@ public class WifiAlgo {
 
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
+            Log.i("id edificio" , edificio);
             params.add(new BasicNameValuePair("id", edificio));
+            Log.i("rp" , rpSelezionato);
             params.add(new BasicNameValuePair("rp", rpSelezionato));
+            Log.i("ssid" ,ssid);
             params.add(new BasicNameValuePair("ssid", ssid));
             params.add(new BasicNameValuePair("bssid", bssid));
             params.add(new BasicNameValuePair("rssid", rssid));
+            Log.i("so" , so);
             params.add(new BasicNameValuePair("so", so));
             params.add(new BasicNameValuePair("nomeDevice", nomeDevice));
+            Log.i("precisone" , precisione);
             params.add(new BasicNameValuePair("precisione", precisione));
 
             // creo il path
-            Setpath setpath =new Setpath();
+            Setpath setpath = new Setpath();
             String path = setpath.getPath();
             String url = path+"inserimentoWifi.php";
 
@@ -142,7 +147,7 @@ public class WifiAlgo {
 
         protected void doInBackground(){
 
-
+            Log.i("invio" , "invio");
         }
 
         protected void onPostExecute(String file_url) {
@@ -153,18 +158,23 @@ public class WifiAlgo {
         public synchronized void finito(){
             controllo = controllo + 1;
             if(controllo == totale.size()){
-                Log.i("********","********");
-                Log.i("finito","ABBIAMO SBANCATO");
-                Log.i("********","********");
 
-                Toast.makeText( AggiungiMisurazioni.con, "Inseriento avvenuto con successo", Toast.LENGTH_LONG).show();
+                fine();
             }
         }
+
+
 
     }
 
 
-
+    private static void fine() {
+        Log.i("********","********");
+        Log.i("finito","ABBIAMO INSERTITO TUTTO");
+        Log.i("********","********");
+        Toast tea = Toast.makeText(AggiungiMisurazioni.con, "Reference point inserito correttamente", Toast.LENGTH_LONG);
+        tea.show();
+    }
 
 
 }
