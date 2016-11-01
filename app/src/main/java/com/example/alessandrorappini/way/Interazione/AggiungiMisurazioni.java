@@ -217,6 +217,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             List<NameValuePair> valori = new ArrayList<NameValuePair>();
 
             String key = (String) getKeyFromValue(spinnerMapEdifici, nameSelezionato);
+            Log.i("keyyyyy","KEY");
+            Log.i("key" , key);
             valori.add(new BasicNameValuePair("key", key));
 
             // creo il path
@@ -226,6 +228,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", valori);
             //controllo il risultato
+
             Log.d("Server ", json.toString());
             try {
                 int risp = json.getInt("successo");
@@ -236,7 +239,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
                     spinnerArrayEdificiRp = new String[lung];
                     for (int i = 0; i < rpRisp.length(); i++) {
                         String nome = rpRisp.get(i).toString();
-                        nome = nome.substring(9);
+                        Log.i("nome" , nome);
 
                         spinnerArrayEdificiRp[i] = nome;
                     }
