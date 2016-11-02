@@ -11,6 +11,7 @@ import android.util.Log;
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiObj;
+import com.example.alessandrorappini.way.Utilities.Timing;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,10 +30,14 @@ public  class WiFiAsyncTask extends AsyncTask<Void, Void , Void>  {
 
     Context con = null;
     Intent inte = null;
+    int timing ;
 
-    public WiFiAsyncTask(Context c, Intent i){
+    public WiFiAsyncTask(Context c, Intent i , int timingFor){
         con = c ;
         inte = i;
+        Timing t = new Timing();
+        timing = t.getTiming(timingFor);
+        Log.i("timing" , timing+"");
     }
 
     protected void onPreExecute(){
@@ -42,7 +47,15 @@ public  class WiFiAsyncTask extends AsyncTask<Void, Void , Void>  {
 
     @Override
     protected Void doInBackground(Void... params){
-        Log.i("info" , "doInBackground");
+        Log.i("info" , "                !!!         doInBackground");
+        Log.i("timing" , timing+"");
+        try {
+            Thread.sleep(timing);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         new WifiScanReceiver().onReceive(con , inte);
         return null;
     }
@@ -81,6 +94,7 @@ public  class WiFiAsyncTask extends AsyncTask<Void, Void , Void>  {
                // Log.i("INFO" , (wifiScanList.get(i)).toString());
                 oby = new WifiObj(ssid , bssid , rssi);
                 listParziale.add(oby);
+
             }
         }
     }

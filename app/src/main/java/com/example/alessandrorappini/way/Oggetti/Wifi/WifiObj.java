@@ -62,7 +62,9 @@ public class WifiObj {
     }
 
     public void eseguiCalcoliRssi (){
+        Log.i("eseguiCalcoliRssi" , "eseguiCalcoliRssi");
         if(rssi.size()>1){
+            Log.i("controlloUguali" , "controlloUguali");
             boolean controlloUguali = controlloUgualianza();
 
             if(controlloUguali == true){
@@ -74,17 +76,21 @@ public class WifiObj {
                     tot = tot + num;
                     media = tot / rssi.size();
                 }
+                mediaRssi = media;
                 Log.i("media" , "la media -->" + media);
                 for (int i=0 ; i< rssi.size() ; i++){
                     int num = (int) rssi.get(i);
                     differenza =  (num - media)^2;
                     scarto = scarto + differenza;
+                    differenza=0;
                 }
 
                 Log.i("differenza" , "la differenza -->" + differenza);
                 Log.i("scarto" , "la scarto -->" + scarto);
 
-                varianzaRssi = scarto / (rssi.size()-1);
+                //METODO UFFICIALE SECONDO LA STATISTICA --> CHIEDERE AL PROF ESATTEZZA
+                //varianzaRssi = scarto / (rssi.size()-1);
+                varianzaRssi = scarto;
             }
         }else {
             mediaRssi = (int) rssi.get(0);
@@ -97,6 +103,9 @@ public class WifiObj {
         for (int i=0 ; i< rssi.size() ; i++){
             int val = (int) rssi.get(i);
             if (primo != val){
+                Log.i("primo" , String.valueOf(primo));
+                Log.i("val " , String.valueOf(val));
+                Log.i("deduzione" , "quidni sono diversi");
                 tuttiUguali=false;
             }
         }

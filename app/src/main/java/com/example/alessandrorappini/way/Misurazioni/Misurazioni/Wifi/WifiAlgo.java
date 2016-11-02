@@ -83,25 +83,28 @@ public class WifiAlgo {
 
         for (int i=0 ; i<totale.size() ; i++) {
             WifiObj appoggio = totale.get(i);
+            Log.i("eseguiCalcoliRssi","eseguiCalcoliRssi");
             appoggio.eseguiCalcoliRssi();
-            String rssid = String.valueOf(appoggio.getRssi()) ;
+            Log.i("getMediaRssi" , appoggio.getMediaRssi()+"");
+            String rssidMedia = String.valueOf(appoggio.getMediaRssi()) ;
+            Log.i("getVarianzaRssi" , appoggio.getVarianzaRssi()+"");
+            String rssidVarianza = String.valueOf(appoggio.getVarianzaRssi()) ;
 
-            new inserisciMisurazioniWifi(appoggio.getSsid() , appoggio.getBssid() , rssid).execute();
+            new inserisciMisurazioniWifi(appoggio.getSsid() , appoggio.getBssid() , rssidMedia , rssidVarianza).execute();
         }
 
     }
-    ///////////////////WORK IN PROGRESS///////////////////////////////////
-    ///////////////////WORK IN PROGRESS///////////////////////////////////
-    ////////////////// WORK IN PROGRESS //////////////////////////////////
-    ///////////////////WORK IN PROGRESS///////////////////////////////////
+
+
     ///////////////////WORK IN PROGRESS///////////////////////////////////
     private static class inserisciMisurazioniWifi extends AsyncTask<String, String, String> {
-        String ssid , bssid , rssid;
+        String ssid , bssid , rssidMedia , rssidVarianza;
 
-        public inserisciMisurazioniWifi(String ssid, String bssid, String rssid) {
+        public inserisciMisurazioniWifi( String ssid, String bssid, String rssidMrdia , String rssidVarianza) {
             this.ssid = ssid;
             this.bssid = bssid;
-            this.rssid = rssid;
+            this.rssidMedia = rssidMrdia;
+            this.rssidVarianza = rssidVarianza;
         }
 
 
@@ -109,18 +112,16 @@ public class WifiAlgo {
 
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            Log.i("id edificio" , edificio);
             params.add(new BasicNameValuePair("id", edificio));
-            Log.i("rp" , rpSelezionato);
             params.add(new BasicNameValuePair("rp", rpSelezionato));
-            Log.i("ssid" ,ssid);
             params.add(new BasicNameValuePair("ssid", ssid));
             params.add(new BasicNameValuePair("bssid", bssid));
-            params.add(new BasicNameValuePair("rssid", rssid));
-            Log.i("so" , so);
+            params.add(new BasicNameValuePair("rssidMedia", rssidMedia));
+            Log.i("rssidMedia  !!!!!!!!!!!" , rssidMedia);
+            params.add(new BasicNameValuePair("rssidVarianza", rssidVarianza));
+            Log.i("rssidVarianza !!!!!!!!" , rssidVarianza);
             params.add(new BasicNameValuePair("so", so));
             params.add(new BasicNameValuePair("nomeDevice", nomeDevice));
-            Log.i("precisone" , precisione);
             params.add(new BasicNameValuePair("precisione", precisione));
 
             // creo il path
@@ -131,7 +132,8 @@ public class WifiAlgo {
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
             //controllo il risultato
-            //Log.d("Server ", json.toString());
+            Log.i("ris","risultato");
+            Log.d("Server ", json.toString());
             try {
                 int successo = json.getInt("successo");
                 if (successo == 1) {

@@ -317,7 +317,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             for ( int  t = 0 ; t < precisione ; t++){
                 con = getApplicationContext();
                 Intent inte = getIntent();
-                WiFiAsyncTask asyncTask =  new WiFiAsyncTask(con , inte);
+                Log.i("t" , t+"");
+                WiFiAsyncTask asyncTask =  new WiFiAsyncTask(con , inte , t);
                 asyncTask.execute();
             }
         }
