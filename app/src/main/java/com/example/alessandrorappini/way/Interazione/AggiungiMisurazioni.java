@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Bluetooth.BluetoothObjAsyncTask;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.R;
@@ -306,6 +309,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void start(View view) {
         //edificio selezionato al momento dello strart
         edificio = (String) getKeyFromValue(spinnerMapEdifici, nameSelezionato);
@@ -322,8 +326,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             cheifWifi = new WifiCheif(precisione , con , inte);
             }
         if (checkBoxBluetooth.isChecked()) {
-            //BluetoothObjAsyncTask boat = new BluetoothObjAsyncTask(precisione , con , inte);
-            //boat.esegui();
+            BluetoothObjAsyncTask boat = new BluetoothObjAsyncTask(precisione , con , inte);
+
         }
     }
 
