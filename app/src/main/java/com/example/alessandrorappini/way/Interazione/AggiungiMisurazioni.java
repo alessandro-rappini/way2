@@ -16,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WiFiAsyncTask;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.R;
@@ -59,6 +58,9 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     //WifiScanReceiver wifiReciever;
 
     public static Context con;
+    public static Intent inte;
+
+
 
     //spinner
     Spinner sp, spRp , mySpinner;
@@ -312,22 +314,22 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
         precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
         final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);
+        final CheckBox checkBoxBluetooth = (CheckBox) findViewById(R.id.ckBluetooth);
+
+        con = getApplicationContext();
+        inte = getIntent();
         if (checkBoxWIFI.isChecked()) {
-            cheifWifi = new WifiCheif(precisione);
-            for ( int  t = 0 ; t < precisione ; t++){
-                con = getApplicationContext();
-                Intent inte = getIntent();
-                Log.i("t" , t+"");
-                WiFiAsyncTask asyncTask =  new WiFiAsyncTask(con , inte , t);
-                asyncTask.execute();
+            cheifWifi = new WifiCheif(precisione , con , inte);
             }
+        if (checkBoxBluetooth.isChecked()) {
+            //BluetoothObjAsyncTask boat = new BluetoothObjAsyncTask(precisione , con , inte);
+            //boat.esegui();
         }
     }
 
-    public static void inserisciCheif (LinkedList lista){
+    public synchronized  static  void inserisciCheif(LinkedList lista){
         Log.i("inserisci" , "inserisci dentro");
         cheifWifi.inserisci(lista);
-        cheifWifi.controlla();
     }
 
     public static void scopatta() {

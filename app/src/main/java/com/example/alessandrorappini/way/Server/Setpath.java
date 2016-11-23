@@ -21,6 +21,9 @@ public class Setpath {
      */
 
     //!!!!!!! connesso alla stessa rete
+    // !!!!!
+    // CASA MIA
+    // !!!!!
     static String path = "http://192.168.1.20:8080/way/";
     //!!!!!!! connesso alla stessa rete
 

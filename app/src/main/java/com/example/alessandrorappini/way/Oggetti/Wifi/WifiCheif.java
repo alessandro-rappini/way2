@@ -1,8 +1,11 @@
 package com.example.alessandrorappini.way.Oggetti.Wifi;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WiFiAsyncTask;
 
 import java.util.LinkedList;
 
@@ -13,27 +16,61 @@ import java.util.LinkedList;
 public class WifiCheif {
     LinkedList <LinkedList> list;
     int precisione;
+    int contatore = 0;
 
-    public WifiCheif(int pr){
+    boolean stop = false;
+    Context con;
+    Intent inte;
+    int io;
+
+    WiFiAsyncTask asyncTask;
+
+    public WifiCheif(int pr , Context c, Intent i){
         precisione = pr;
+        con = c ;
+        inte = i;
+        io=0;
         list = new LinkedList<>();
+        Log.i("info" , "la precisione è " + precisione);
+        chiamaAsync();
     }
 
-    public void inserisci (LinkedList lst){
+    private synchronized void chiamaAsync() {
+        Log.i("info" , "---- volta");
+        Log.i("info" , io + "");
+        Log.i("info" , "---- volta");
+        if(stop==false){
+            asyncTask =  new WiFiAsyncTask(con , inte );
+        }else {
+            Log.i("info" , "FERMO");
+        }
+        io++;
+    }
+
+
+    public synchronized void inserisci (LinkedList lst){
+        Log.i("info" , "----");
+        Log.i("info" , "chaimo --> SetUnregisterReceiver");
+        Log.i("info" , "----");
+        asyncTask.SetUnregisterReceiver();
         list.add(lst);
+        contatore ++;
+        if ( contatore == precisione ){
+            stop=true;
+            AggiungiMisurazioni.scopatta();
+        }else {
+            chiamaAsync();
+        }
+    }
+
+    public int getContatore (){
+        return contatore;
     }
 
     public int   getLunghezza(){
          return list.size();
     }
 
-    public void controlla(){
-        if ((precisione) == list.size()){
-            AggiungiMisurazioni.scopatta();
-        }else {
-            Log.i("infooo" , "continuo a ciclare");
-        }
-    }
 
     public LinkedList getLista(int i){
         return list.get(i);

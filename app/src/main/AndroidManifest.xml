@@ -7,6 +7,18 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+
+
+    <receiver android:name=".WifiReceiver" android:exported="false" >
+       <intent-filter>
+         <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+       </intent-filter>
+     </receiver>
+     <service android:name=".WifiReceiver$WifiActiveService" android:exported="false" />
 
     <application
         android:allowBackup="true"

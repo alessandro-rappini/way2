@@ -83,11 +83,8 @@ public class WifiAlgo {
 
         for (int i=0 ; i<totale.size() ; i++) {
             WifiObj appoggio = totale.get(i);
-            Log.i("eseguiCalcoliRssi","eseguiCalcoliRssi");
             appoggio.eseguiCalcoliRssi();
-            Log.i("getMediaRssi" , appoggio.getMediaRssi()+"");
             String rssidMedia = String.valueOf(appoggio.getMediaRssi()) ;
-            Log.i("getVarianzaRssi" , appoggio.getVarianzaRssi()+"");
             String rssidVarianza = String.valueOf(appoggio.getVarianzaRssi()) ;
 
             new inserisciMisurazioniWifi(appoggio.getSsid() , appoggio.getBssid() , rssidMedia , rssidVarianza).execute();
@@ -96,7 +93,6 @@ public class WifiAlgo {
     }
 
 
-    ///////////////////WORK IN PROGRESS///////////////////////////////////
     private static class inserisciMisurazioniWifi extends AsyncTask<String, String, String> {
         String ssid , bssid , rssidMedia , rssidVarianza;
 
@@ -117,9 +113,9 @@ public class WifiAlgo {
             params.add(new BasicNameValuePair("ssid", ssid));
             params.add(new BasicNameValuePair("bssid", bssid));
             params.add(new BasicNameValuePair("rssidMedia", rssidMedia));
-            Log.i("rssidMedia  !!!!!!!!!!!" , rssidMedia);
+            Log.i("rssidMedia  ---->" , rssidMedia);
             params.add(new BasicNameValuePair("rssidVarianza", rssidVarianza));
-            Log.i("rssidVarianza !!!!!!!!" , rssidVarianza);
+            Log.i("rssidVarianza ---->" , rssidVarianza);
             params.add(new BasicNameValuePair("so", so));
             params.add(new BasicNameValuePair("nomeDevice", nomeDevice));
             params.add(new BasicNameValuePair("precisione", precisione));
@@ -160,12 +156,9 @@ public class WifiAlgo {
         public synchronized void finito(){
             controllo = controllo + 1;
             if(controllo == totale.size()){
-
                 fine();
             }
         }
-
-
 
     }
 
@@ -176,6 +169,7 @@ public class WifiAlgo {
         Log.i("********","********");
         Toast tea = Toast.makeText(AggiungiMisurazioni.con, "Reference point inserito correttamente", Toast.LENGTH_LONG);
         tea.show();
+
     }
 
 
