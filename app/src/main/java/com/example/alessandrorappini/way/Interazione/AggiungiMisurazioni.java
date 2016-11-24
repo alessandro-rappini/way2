@@ -18,8 +18,8 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Bluetooth.BluetoothObjAsyncTask;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo;
+import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.R;
 import com.example.alessandrorappini.way.Server.JSONParser;
@@ -326,17 +326,27 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             cheifWifi = new WifiCheif(precisione , con , inte);
             }
         if (checkBoxBluetooth.isChecked()) {
-            BluetoothObjAsyncTask boat = new BluetoothObjAsyncTask(precisione , con , inte);
+            BluetoothCheif bluetoohCheif = new BluetoothCheif(precisione , con , inte);
 
         }
     }
 
-    public synchronized  static  void inserisciCheif(LinkedList lista){
+    public synchronized  static  void inserisciCheifWiFi(LinkedList lista){
         Log.i("inserisci" , "inserisci dentro");
         cheifWifi.inserisci(lista);
     }
 
-    public static void scopatta() {
+
+    public static void inserisciCheifBlue(LinkedList lista){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            BluetoothCheif.inserisci(lista);
+        }
+    }
+
+
+
+    public static void scopattaWifi() {
         WifiAlgo.inizia(cheifWifi);
     }
 }

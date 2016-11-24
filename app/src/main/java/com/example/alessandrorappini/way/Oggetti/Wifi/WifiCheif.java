@@ -57,7 +57,7 @@ public class WifiCheif {
         contatore ++;
         if ( contatore == precisione ){
             stop=true;
-            AggiungiMisurazioni.scopatta();
+            AggiungiMisurazioni.scopattaWifi();
         }else {
             chiamaAsync();
         }

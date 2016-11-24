@@ -81,7 +81,7 @@ public  class WiFiAsyncTask  {
                 oby = new WifiObj(ssid , bssid , rssi);
                 listParziale.add(oby);
             }
-            AggiungiMisurazioni.inserisciCheif(listParziale);
+            AggiungiMisurazioni.inserisciCheifWiFi(listParziale);
         }
     }
 

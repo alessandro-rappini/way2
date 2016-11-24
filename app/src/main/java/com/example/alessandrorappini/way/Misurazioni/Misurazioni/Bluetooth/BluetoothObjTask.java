@@ -5,11 +5,16 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+
+import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothObj;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Created by Alessandro Rappini on 22/11/2016.
@@ -19,33 +24,34 @@ import android.util.Log;
  */
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class BluetoothObjAsyncTask extends ListActivity {
+public class BluetoothObjTask extends ListActivity {
 
-    int precisone;
+
     Context con = null;
-    Intent inte = null;
 
 
     public BluetoothManager bluetoothManager;
-
     private BluetoothAdapter mBluetoothAdapter;
 
     private Handler scanHandler = new Handler();
-    private int scan_interval_ms = 5000;
 
-    private static final long SCAN_PERIOD = 15000;
+    private static final long SCAN_PERIOD = 9000;
     private boolean isScanning = false;
 
+    LinkedList<BluetoothObj> listBeaconsTemp;
+    //HashMap <String , LinkedList> registro ;
 
-    public BluetoothObjAsyncTask(int precisione, Context c, Intent i) {
-        this.precisone = precisione;
+
+    public BluetoothObjTask( Context c) {
+
         this.con = c;
-        this.inte = i;
+
 
         bluetoothManager = (BluetoothManager) con.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
+
+        listBeaconsTemp = new <HashMap>  LinkedList ();
         scanLeDevice(true);
-     //   scanHandler.post(scanRunnable);
     }
 
     private void scanLeDevice(final boolean enable) {
@@ -54,55 +60,27 @@ public class BluetoothObjAsyncTask extends ListActivity {
             scanHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Log.i("info" ,  "STOP ------------------  DUE");
                     isScanning = false;
                     mBluetoothAdapter.stopLeScan(leScanCallback);
+                    calcolaMediaOggetti();
                 }
             }, SCAN_PERIOD);
-
+            Log.i("info" ,  "START ------------------");
             isScanning = true;
             mBluetoothAdapter.startLeScan(leScanCallback);
         } else {
+            Log.i("info" ,  "STOP ------------------   UNO");
             isScanning = false;
             mBluetoothAdapter.stopLeScan(leScanCallback);
         }
     }
-
-    /*private Runnable scanRunnable = new Runnable()
-    {
-        @Override
-        public void run() {
-            if (isScanning) {
-                if (mBluetoothAdapter != null)
-                {
-                    Log.i("info " , " stop le scan ------------------------------------ STOP");
-                    mBluetoothAdapter.stopLeScan(leScanCallback);
-                }
-            }
-            else
-            {
-                if (mBluetoothAdapter != null)
-                {
-                    Log.i("info " , " Start le scan  ------------------------------------ START");
-                    mBluetoothAdapter.startLeScan(leScanCallback);
-                }
-            }
-            isScanning = !isScanning;
-            scanHandler.postDelayed(this, scan_interval_ms);
-        }
-    };*/
-
 
     protected BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback()
     {
         @Override
         public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord)
         {
-            Log.i("!!!!!!" , "entrp dentro BluetoothAdapter");
-            Log.i("device " , device + "");
-            Log.i("rssi" ,  rssi + "");
-            Log.i("info" , "fermo il tutto");
-
-
 
             int startByte = 2;
             boolean patternFound = false;
@@ -134,10 +112,58 @@ public class BluetoothObjAsyncTask extends ListActivity {
                 final int major = (scanRecord[startByte + 20] & 0xff) * 0x100 + (scanRecord[startByte + 21] & 0xff);
                 // minor
                 final int minor = (scanRecord[startByte + 22] & 0xff) * 0x100 + (scanRecord[startByte + 23] & 0xff);
+
+                Log.i("!!!!!!" , "RILEVATO:");
                 Log.i("info" ,"UUID: " +uuid + "\\nmajor: " +major +"\\nminor" +minor);
+                Log.i("device " , device + "");
+                Log.i("rssi" ,  rssi + "");
+
+                if ( listBeaconsTemp.size() == 0){
+                    BluetoothObj bluetoothObj = new BluetoothObj(device.toString());
+                    bluetoothObj.inserisciRssi(rssi);
+                    listBeaconsTemp.add(bluetoothObj);
+                }else {
+                    Boolean eisteinza = controllaEsistenza(device.toString());
+                    if (eisteinza==false){
+                        // abbiamo trovato un nuovo device
+                        BluetoothObj bluetoothObj = new BluetoothObj(device.toString());
+                        bluetoothObj.inserisciRssi(rssi);
+                        listBeaconsTemp.add(bluetoothObj);
+                    }else {
+                        // il device esiste già, dobbiamo aggiungere i valori
+                        BluetoothObj oggettoDaAggiorare = passamiOggettoDaAggiorare(device.toString());
+                        oggettoDaAggiorare.inserisciRssi(rssi);
+                    }
+                }
+
             }
+
+
+
         }
     };
+
+    private BluetoothObj passamiOggettoDaAggiorare(String device) {
+        BluetoothObj oggettoDaRitornare = null;
+        for (int i=0 ; i < listBeaconsTemp.size() ; i++) {
+            BluetoothObj appoggioBluetoothObj = listBeaconsTemp.get(i);
+            if (appoggioBluetoothObj.getDevice().equals(device)){
+                oggettoDaRitornare = appoggioBluetoothObj;
+            }
+        }
+        return oggettoDaRitornare;
+    }
+
+    private Boolean controllaEsistenza(String device) {
+        Boolean esiste = false;
+        for (int i=0 ; i < listBeaconsTemp.size() ; i++) {
+            BluetoothObj appoggioBluetoothObj = listBeaconsTemp.get(i);
+            if (appoggioBluetoothObj.getDevice().equals(device)){
+                esiste = true;
+            }
+        }
+        return esiste;
+    }
 
     /**
      * bytesToHex method
@@ -153,6 +179,14 @@ public class BluetoothObjAsyncTask extends ListActivity {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    private void calcolaMediaOggetti() {
+        for (int i=0 ; i < listBeaconsTemp.size() ; i++) {
+            BluetoothObj appoggioBluetoothObj = listBeaconsTemp.get(i);
+            appoggioBluetoothObj.calcolaMediaRssi();
+        }
+        AggiungiMisurazioni.inserisciCheifBlue(listBeaconsTemp);
     }
 
 
