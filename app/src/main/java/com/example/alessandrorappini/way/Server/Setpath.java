@@ -24,7 +24,7 @@ public class Setpath {
     // !!!!!
     // CASA MIA
     // !!!!!
-    static String path = "http://192.168.1.20:8080/way/";
+    //static String path = "http://192.168.1.20:8080/way/";
     //!!!!!!! connesso alla stessa rete
 
     //!!!!!!!!!!             hotspot
@@ -33,7 +33,7 @@ public class Setpath {
     //netsh wlan start hostednetwork
     //netsh wlan stop hostednetwork
     //netsh wlan set hostednetwork mode=disallow
-    //static String path = "http://192.168.137.1:8080/way/";
+    static String path = "http://192.168.137.1:8080/way/";
     //!!!!!!!!!!             hotspot
 
     //!!!!!!!!!!            LOCALE

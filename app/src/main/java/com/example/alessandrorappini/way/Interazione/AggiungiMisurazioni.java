@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Bluetooth.BluetoothAlgo;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo;
 import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
@@ -56,6 +57,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     int lunghezzaArray;
 
     static WifiCheif cheifWifi;
+    static BluetoothCheif bluetoohCheif;
    // WifiManager  wifi;
     //String wifis[];
     //WifiScanReceiver wifiReciever;
@@ -326,8 +328,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             cheifWifi = new WifiCheif(precisione , con , inte);
             }
         if (checkBoxBluetooth.isChecked()) {
-            BluetoothCheif bluetoohCheif = new BluetoothCheif(precisione , con , inte);
-
+            bluetoohCheif = new BluetoothCheif(precisione , con , inte);
         }
     }
 
@@ -344,11 +345,18 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         }
     }
 
-
-
     public static void scopattaWifi() {
         WifiAlgo.inizia(cheifWifi);
     }
+
+    public static void scompattaBluetooth () {
+        int i= bluetoohCheif.getLunghezza();
+        Log.i("lunghezza" , "lunghezza " + i);
+        BluetoothCheif app;
+        app = bluetoohCheif;
+
+        BluetoothAlgo.inizia(bluetoohCheif);
+        }
 }
 
 

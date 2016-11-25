@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Bluetooth.BluetoothObjTask;
 import com.example.alessandrorappini.way.Utilities.ChiamataBold;
 
@@ -47,10 +48,26 @@ public class BluetoothCheif {
 
         listPrimaria.add(lista);
         if(contatore == precisione){
-            Log.i("*****" , "abbiamoFinito");
+            Log.i("info" , "abbiamo finito chiamo lo scompattatore");
+            scomapatta();
         }else {
             ChiamataBold chiamata = new ChiamataBold(1);
             chiamaBluetooth();
         }
+    }
+
+    private static void scomapatta() {
+
+        int i=listPrimaria.size();
+        int h=0;
+        AggiungiMisurazioni.scompattaBluetooth();
+    }
+
+    public LinkedList getLista(int i){
+        return listPrimaria.get(i);
+    }
+
+    public int   getLunghezza(){
+        return listPrimaria.size();
     }
 }
