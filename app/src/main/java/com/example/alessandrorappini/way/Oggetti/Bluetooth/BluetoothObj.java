@@ -22,7 +22,6 @@ public class BluetoothObj {
         rssiMediaList = new LinkedList<>();
         rssiMedia = 0;
         rssiVarianza =0;
-
     }
 
     public String getDevice() {

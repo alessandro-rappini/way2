@@ -23,7 +23,7 @@ public class BluetoothCheif {
     static int precisione;
     static LinkedList <LinkedList> listPrimaria;
 
-    static int contatore =0 ;
+    static int contatoreBlue =0 ;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public BluetoothCheif(int pr , Context c, Intent i){
@@ -38,7 +38,7 @@ public class BluetoothCheif {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static void chiamaBluetooth() {
-        contatore++;
+        contatoreBlue++;
         BluetoothObjTask boat = new BluetoothObjTask(con);
     }
 
@@ -47,11 +47,12 @@ public class BluetoothCheif {
     public static void inserisci(LinkedList lista) {
 
         listPrimaria.add(lista);
-        if(contatore == precisione){
+        if(contatoreBlue == precisione){
             Log.i("info" , "abbiamo finito chiamo lo scompattatore");
             scomapatta();
         }else {
             ChiamataBold chiamata = new ChiamataBold(1);
+            Log.i("info" , "contatore  --> " + contatoreBlue);
             chiamaBluetooth();
         }
     }

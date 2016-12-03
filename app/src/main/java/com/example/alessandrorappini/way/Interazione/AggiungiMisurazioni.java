@@ -19,8 +19,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Bluetooth.BluetoothAlgo;
+import com.example.alessandrorappini.way.Misurazioni.Misurazioni.NetWork.NetWorkAlgo;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo;
 import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothCheif;
+import com.example.alessandrorappini.way.Oggetti.NetWork.NetWorkCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.R;
 import com.example.alessandrorappini.way.Server.JSONParser;
@@ -58,6 +60,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
     static WifiCheif cheifWifi;
     static BluetoothCheif bluetoohCheif;
+    static NetWorkCheif netWorkCheif;
    // WifiManager  wifi;
     //String wifis[];
     //WifiScanReceiver wifiReciever;
@@ -137,7 +140,6 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
-
 
 
     class popolaEdifici extends AsyncTask<String, String, String> {
@@ -321,6 +323,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
         final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);
         final CheckBox checkBoxBluetooth = (CheckBox) findViewById(R.id.ckBluetooth);
+        final CheckBox checkBoxNetWork = (CheckBox) findViewById(R.id.ckreteCell);
 
         con = getApplicationContext();
         inte = getIntent();
@@ -330,6 +333,11 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         if (checkBoxBluetooth.isChecked()) {
             bluetoohCheif = new BluetoothCheif(precisione , con , inte);
         }
+        if (checkBoxNetWork.isChecked()) {
+            netWorkCheif = new NetWorkCheif(precisione , con , inte);
+        }
+
+
     }
 
     public synchronized  static  void inserisciCheifWiFi(LinkedList lista){
@@ -345,6 +353,10 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         }
     }
 
+    public static void inserisciCheifNetWord(int value){
+        NetWorkCheif.inserisci(value);
+    }
+
     public static void scopattaWifi() {
         WifiAlgo.inizia(cheifWifi);
     }
@@ -352,11 +364,12 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     public static void scompattaBluetooth () {
         int i= bluetoohCheif.getLunghezza();
         Log.i("lunghezza" , "lunghezza " + i);
-        BluetoothCheif app;
-        app = bluetoohCheif;
-
         BluetoothAlgo.inizia(bluetoohCheif);
         }
+
+    public static void inviaNetWork() {
+        NetWorkAlgo.invia(netWorkCheif);
+    }
 }
 
 

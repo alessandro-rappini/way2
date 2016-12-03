@@ -57,6 +57,7 @@ public  class WiFiAsyncTask  {
                 e.printStackTrace();
             }
             wifi = (WifiManager) con.getSystemService(Context.WIFI_SERVICE);
+            wifi.setWifiEnabled(true);
             wifiReciever = new WifiScanReceiver();
             con.registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
             wifi.startScan();

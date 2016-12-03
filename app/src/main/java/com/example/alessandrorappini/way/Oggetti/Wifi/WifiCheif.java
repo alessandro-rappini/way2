@@ -16,7 +16,7 @@ import java.util.LinkedList;
 public class WifiCheif {
     LinkedList <LinkedList> list;
     int precisione;
-    int contatore = 0;
+    int contatoreWiFi = 0;
 
     boolean stop = false;
     Context con;
@@ -54,9 +54,10 @@ public class WifiCheif {
         Log.i("info" , "----");
         asyncTask.SetUnregisterReceiver();
         list.add(lst);
-        contatore ++;
-        if ( contatore == precisione ){
+        contatoreWiFi ++;
+        if ( contatoreWiFi == precisione ){
             stop=true;
+            contatoreWiFi = 0;
             AggiungiMisurazioni.scopattaWifi();
         }else {
             chiamaAsync();
@@ -64,7 +65,7 @@ public class WifiCheif {
     }
 
     public int getContatore (){
-        return contatore;
+        return contatoreWiFi;
     }
 
     public int   getLunghezza(){
