@@ -48,6 +48,7 @@ public class BluetoothObj {
         rssiMediaList.add(lst);
     }
 
+    //non lo si usa più
     public void calcolaMediaRssi() {
         int somma =0 ;
         int numeroValori;
@@ -58,6 +59,12 @@ public class BluetoothObj {
         }
         int media = (somma/numeroValori);
         rssi = media;
+        rssiList.clear();
+    }
+    // non lo si usa piu
+
+    public void prendiIlPrimo(){
+        rssi = (int) rssiList.get(1);
         rssiList.clear();
     }
 

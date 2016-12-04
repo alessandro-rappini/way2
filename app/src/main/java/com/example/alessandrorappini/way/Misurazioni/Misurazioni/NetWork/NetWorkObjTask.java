@@ -11,7 +11,7 @@ import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
  * Created by Alessandro Rappini on 03/12/2016.
  */
 
-public class NetWorkObjTask {
+public  class NetWorkObjTask {
     static Context context;
     TelephonyManager telephonyManager;
     myPhoneStateListener psListener;
@@ -27,6 +27,8 @@ public class NetWorkObjTask {
         telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(psListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
+
+
 
     public class myPhoneStateListener extends PhoneStateListener {
         public int signalStrengthValue;
