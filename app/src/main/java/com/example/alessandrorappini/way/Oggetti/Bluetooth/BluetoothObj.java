@@ -64,8 +64,13 @@ public class BluetoothObj {
     // non lo si usa piu
 
     public void prendiIlPrimo(){
-        rssi = (int) rssiList.get(1);
-        rssiList.clear();
+        if(rssiList.size()!=0){
+            rssi = (int) rssiList.get(1);
+            rssiList.clear();
+        }else {
+            rssi=0;
+        }
+
     }
 
     public void eseguiCalcoliRssi() {
