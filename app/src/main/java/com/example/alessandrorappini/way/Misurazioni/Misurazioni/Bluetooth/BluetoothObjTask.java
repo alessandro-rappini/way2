@@ -182,6 +182,8 @@ public class BluetoothObjTask extends ListActivity {
             BluetoothObj appoggioBluetoothObj = listBeaconsTemp.get(i);
             // non lo si usa piu
             //appoggioBluetoothObj.calcolaMediaRssi();
+
+            // non pulisco la lista dopo
             appoggioBluetoothObj.prendiIlPrimo();
         }
         AggiungiMisurazioni.inserisciCheifBlue(listBeaconsTemp);
