@@ -157,8 +157,8 @@ public class BluetoothAlgo {
         Log.i("********","********");
         Log.i("finito","ABBIAMO INSERTITO TUTTO");
         Log.i("********","********");
-        Toast tea = Toast.makeText(AggiungiMisurazioni.con, "Reference point inserito correttamente", Toast.LENGTH_LONG);
-        tea.show();
+        /*Toast tea = Toast.makeText(AggiungiMisurazioni.con, "Reference point inserito correttamente", Toast.LENGTH_LONG);
+        tea.show();*/
     }
 
 }

@@ -11,13 +11,16 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.alessandrorappini.way.MainActivity;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Bluetooth.BluetoothAlgo;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.NetWork.NetWorkAlgo;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo;
@@ -45,6 +48,7 @@ import java.util.List;
 
 import static com.example.alessandrorappini.way.R.id.spinnerEdificio;
 import static com.example.alessandrorappini.way.R.id.spinnerRP;
+import static com.example.alessandrorappini.way.R.layout.dialog_misurazioni;
 import static com.example.alessandrorappini.way.Utilities.Utilities.getKeyFromValue;
 
 public class AggiungiMisurazioni extends AppCompatActivity {
@@ -65,9 +69,23 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     //String wifis[];
     //WifiScanReceiver wifiReciever;
 
+    static Dialog dialogRilevazioni = null;
+    static Dialog dialogFine = null;
+
     public static Context con;
     public static Intent inte;
 
+    public static boolean selectedDialog= false;
+    public static boolean wifiDone= true;
+    public static boolean blueDone= true;
+    public static boolean netWorkDone= true;
+
+    public static int contatoreWiFi = 0;
+    public static int contatoreBlue = 0;
+    public static int contatoreNetWorke = 0;
+
+
+    private static Context mContext;
 
 
     //spinner
@@ -94,6 +112,10 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiungi_misurazioni);
+
+        mContext = this;
+
+
         buttonStart = (Button) findViewById(R.id.btnStart) ;
         //wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
         //wifiReciever = new WifiScanReceiver();
@@ -327,49 +349,159 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
         con = getApplicationContext();
         inte = getIntent();
+        boolean localWifi= false;
+        boolean localBlue= false;
+        boolean localNet= false;
+
         if (checkBoxWIFI.isChecked()) {
-            cheifWifi = new WifiCheif(precisione , con , inte);
-            }
+            localWifi = true;
+            selectedDialog = true;
+            wifiDone = false;
+        }
+
         if (checkBoxBluetooth.isChecked()) {
-            bluetoohCheif = new BluetoothCheif(precisione , con , inte);
+            localBlue = true;
+            selectedDialog = true;
+            blueDone = false;
         }
         if (checkBoxNetWork.isChecked()) {
+            localNet = true;
+            selectedDialog = true;
+            netWorkDone = false;
+        }
+
+
+        if (selectedDialog== true){
+            apriDialog(localWifi , localBlue , localNet);
+        }else {
+            Toast.makeText(AggiungiMisurazioni.this, "Seleziona almeno uno strumento di analisi", Toast.LENGTH_LONG).show();
+        }
+
+
+        if(localWifi == true){
+            cheifWifi = new WifiCheif(precisione , con , inte);
+        }
+
+        if (localBlue == true){
+            bluetoohCheif = new BluetoothCheif(precisione , con , inte);
+        }
+
+        if(localNet == true){
             netWorkCheif = new NetWorkCheif(precisione , con , inte);
         }
 
-
     }
 
+    private void apriDialog(boolean bWifi , boolean bBlue  , boolean bNetWork) {
+
+        dialogRilevazioni = new Dialog(this);
+        dialogRilevazioni.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogRilevazioni.setCancelable(false);
+        dialogRilevazioni.setContentView(dialog_misurazioni);
+
+        TextView precisioneTextView=(TextView)dialogRilevazioni.findViewById(R.id.dialog_precisone);
+        String datoDialog =  String.valueOf(precisione);
+        precisioneTextView.setText(datoDialog);
+
+        if (bWifi == true){
+            TextView TextViewWiFi=(TextView)dialogRilevazioni.findViewById(R.id.contatoreWifi);
+            String dato = "in corso";
+            TextViewWiFi.setText(dato);
+        }
+
+        if (bBlue == true){
+            TextView TextViewBlue=(TextView)dialogRilevazioni.findViewById(R.id.contatoreBlue);
+            String dato = "in corso";
+            TextViewBlue.setText(dato);
+        }
+
+        if( bNetWork == true){
+            TextView TextViewNetWorg=(TextView)dialogRilevazioni.findViewById(R.id.contatoreNetWork);
+            String dato = "in corso";
+            TextViewNetWorg.setText(dato);
+        }
+        dialogRilevazioni.show();
+    }
+
+    //--------------------- inserisco dentro l'oggetto principale
     public synchronized  static  void inserisciCheifWiFi(LinkedList lista){
-        Log.i("inserisci" , "inserisci dentro");
+        TextView contatoreTextViewWiFi=(TextView)dialogRilevazioni.findViewById(R.id.contatoreWifi);
+        contatoreWiFi ++ ;
+        String datoWifi =  String.valueOf(contatoreWiFi);
+        contatoreTextViewWiFi.setText(datoWifi);
         cheifWifi.inserisci(lista);
     }
 
-
     public static void inserisciCheifBlue(LinkedList lista){
-
+        TextView contatoreTextViewBlue=(TextView)dialogRilevazioni.findViewById(R.id.contatoreBlue);
+        contatoreBlue ++ ;
+        String datoBlue =  String.valueOf(contatoreBlue);
+        contatoreTextViewBlue.setText(datoBlue);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             BluetoothCheif.inserisci(lista);
         }
     }
 
     public static void inserisciCheifNetWord(int value){
+        TextView contatoreTextViewNetWorg=(TextView)dialogRilevazioni.findViewById(R.id.contatoreNetWork);
+        contatoreNetWorke ++ ;
+        String datoNetWork =  String.valueOf(contatoreNetWorke);
+        contatoreTextViewNetWorg.setText(datoNetWork);
+
         NetWorkCheif.inserisci(value);
     }
+    //-----------------------------------------------------------
 
     public static void scopattaWifi() {
+        TextView TextViewWiFi=(TextView)dialogRilevazioni.findViewById(R.id.contatoreWifi);
+        String messaggio = "terminata l'analisi";
+        TextViewWiFi.setText(messaggio);
+        wifiDone = true;
+        controllaStatoAnalisi();
         WifiAlgo.inizia(cheifWifi);
     }
 
     public static void scompattaBluetooth () {
-        int i= bluetoohCheif.getLunghezza();
-        Log.i("lunghezza" , "lunghezza " + i);
+        /*int i= bluetoohCheif.getLunghezza();
+        Log.i("lunghezza" , "lunghezza " + i);*/
+        TextView TextViewBlue=(TextView)dialogRilevazioni.findViewById(R.id.contatoreBlue);
+        String messaggio = "terminata l'analisi";
+        TextViewBlue.setText(messaggio);
+        blueDone = true;
+        controllaStatoAnalisi();
         BluetoothAlgo.inizia(bluetoohCheif);
         }
 
     public static void inviaNetWork() {
+        TextView TextViewNetWorg=(TextView)dialogRilevazioni.findViewById(R.id.contatoreNetWork);
+        String messaggio = "terminata l'analisi";
+        TextViewNetWorg.setText(messaggio);
+        netWorkDone = true;
+        controllaStatoAnalisi();
         NetWorkAlgo.invia(netWorkCheif);
     }
+
+    public static synchronized void controllaStatoAnalisi(){
+        if (wifiDone == true && blueDone == true && netWorkDone== true){
+            dialogRilevazioni.dismiss();
+            Toast.makeText(mContext, "Terminato l'analisi e l'inserimento", Toast.LENGTH_LONG).show();
+            threadFine.start();
+        }
+    }
+
+    static Thread threadFine = new Thread(){
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(1000);
+                Intent fine = new Intent(mContext, MainActivity.class);
+                mContext.startActivity(fine);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
 }
 
 

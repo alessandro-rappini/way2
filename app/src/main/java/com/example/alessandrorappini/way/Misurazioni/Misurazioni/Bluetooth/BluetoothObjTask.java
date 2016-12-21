@@ -35,7 +35,7 @@ public class BluetoothObjTask extends ListActivity {
 
     private Handler scanHandler = new Handler();
 
-    private static final long SCAN_PERIOD = 1000;
+    private static final long SCAN_PERIOD = 2000;
     private boolean isScanning = false;
 
     LinkedList<BluetoothObj> listBeaconsTemp;

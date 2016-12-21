@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_info1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="25dp"
+        android:text="Rilevamento dati ...."/>
+
+    <TextView
+        android:id="@+id/dialog_info8"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="Precisione"
+        />
+
+    <TextView
+        android:id="@+id/dialog_precisone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:text="num"/>
+
+    <TextView
+        android:id="@+id/dialog_info2"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="WiFi"
+         />
+
+    <TextView
+        android:id="@+id/contatoreWifi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:text="non attivo"/>
+
+    <TextView
+        android:id="@+id/dialog_info4"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="Bluetooth"/>
+
+    <TextView
+        android:id="@+id/contatoreBlue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:text="non attivo"/>
+
+    <TextView
+        android:id="@+id/dialog_info6"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="NetWork"/>
+
+    <TextView
+        android:id="@+id/contatoreNetWork"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:text="non attivo"/>
+
+
+</LinearLayout>
