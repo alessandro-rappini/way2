@@ -379,15 +379,15 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
 
         if(localWifi == true){
-            cheifWifi = new WifiCheif(precisione , con , inte);
+            cheifWifi = new WifiCheif(precisione , con , inte , "misurazioni");
         }
 
         if (localBlue == true){
-            bluetoohCheif = new BluetoothCheif(precisione , con , inte);
+            bluetoohCheif = new BluetoothCheif(precisione , con , inte , "misurazioni");
         }
 
         if(localNet == true){
-            netWorkCheif = new NetWorkCheif(precisione , con , inte);
+            netWorkCheif = new NetWorkCheif(precisione , con , inte , "misurazioni");
         }
 
     }
@@ -485,22 +485,28 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         if (wifiDone == true && blueDone == true && netWorkDone== true){
             dialogRilevazioni.dismiss();
             Toast.makeText(mContext, "Terminato l'analisi e l'inserimento", Toast.LENGTH_LONG).show();
+            contatoreWiFi = 0;
+            contatoreBlue = 0;
+            contatoreNetWorke = 0;
+            Thread threadFine = new Thread(){
+                @Override
+                public void run() {
+                    try {
+
+                        Thread.sleep(1000);
+                        Intent fine = new Intent(mContext, MainActivity.class);
+                        mContext.startActivity(fine);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
             threadFine.start();
         }
     }
 
-    static Thread threadFine = new Thread(){
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(1000);
-                Intent fine = new Intent(mContext, MainActivity.class);
-                mContext.startActivity(fine);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+
 
 }
 

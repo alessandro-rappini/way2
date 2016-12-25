@@ -26,7 +26,7 @@ public class NetWorkCheif {
     static int scarto = 0 ;
 
 
-    public NetWorkCheif(int pr , Context c, Intent i){
+    public NetWorkCheif(int pr , Context c, Intent i , String invio){
         precisione = pr;
         con = c ;
         inte = i;

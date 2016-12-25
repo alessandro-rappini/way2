@@ -2,7 +2,6 @@ package com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
@@ -158,8 +157,12 @@ public class WifiAlgo {
         Log.i("********","********");
         Log.i("finito","ABBIAMO INSERTITO TUTTO");
         Log.i("********","********");
-        Toast tea = Toast.makeText(AggiungiMisurazioni.con, "Reference point inserito correttamente", Toast.LENGTH_LONG);
-        tea.show();
+        totale.clear();
+        int i=0;
+        int a = 9;
+        int somma = i + a;
+        //Toast tea = Toast.makeText(AggiungiMisurazioni.con, "Reference point inserito correttamente", Toast.LENGTH_LONG);
+        //tea.show();
     }
 
 

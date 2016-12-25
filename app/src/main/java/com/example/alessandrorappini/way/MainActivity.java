@@ -3,10 +3,10 @@ package com.example.alessandrorappini.way;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.example.alessandrorappini.way.Interazione.MenuInterazione;
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 
 public class MainActivity extends AppCompatActivity {
     //
@@ -17,7 +17,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void localizzati (View view){
-        Log.i("info" , " nulla");
+        Intent intent = new Intent(this , PrincipaleLocalizzati.class);
+        startActivity(intent);
     }
 
     public void interagisci (View view){

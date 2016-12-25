@@ -23,12 +23,15 @@ public class WifiCheif {
     Intent inte;
     int io;
 
+    String fine ;
+
     WiFiAsyncTask asyncTask;
 
-    public WifiCheif(int pr , Context c, Intent i){
+    public WifiCheif(int pr , Context c, Intent i , String invio){
         precisione = pr;
         con = c ;
         inte = i;
+        fine = invio;
         io=0;
         list = new LinkedList<>();
         Log.i("info" , "la precisione è " + precisione);

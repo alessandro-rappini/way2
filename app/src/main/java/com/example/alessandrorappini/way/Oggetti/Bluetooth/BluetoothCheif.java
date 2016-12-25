@@ -26,7 +26,7 @@ public class BluetoothCheif {
     static int contatoreBlue =0 ;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public BluetoothCheif(int pr , Context c, Intent i){
+    public BluetoothCheif(int pr , Context c, Intent i , String invio){
         precisione = pr;
         con = c ;
         inte = i;
