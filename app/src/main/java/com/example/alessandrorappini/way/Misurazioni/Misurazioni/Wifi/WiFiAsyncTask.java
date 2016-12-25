@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiObj;
 
@@ -29,11 +30,13 @@ public  class WiFiAsyncTask  {
     LinkedList <WifiObj> listParziale;
     Context con = null;
     Intent inte = null;
+    String invio;
 
 
-    public WiFiAsyncTask(Context c, Intent i ){
+    public WiFiAsyncTask(Context c, Intent i  , String fine){
         con = c ;
         inte = i;
+        invio = fine;
         new avviaRicerca().execute();
     }
 
@@ -82,7 +85,15 @@ public  class WiFiAsyncTask  {
                 oby = new WifiObj(ssid , bssid , rssi);
                 listParziale.add(oby);
             }
-            AggiungiMisurazioni.inserisciCheifWiFi(listParziale);
+            if (invio.equals("misurazioni") ){
+                AggiungiMisurazioni.inserisciCheifWiFi(listParziale);
+            }
+
+            if (invio.equals("localizzazione") ){
+                PrincipaleLocalizzati.inserisciCheifWiFiLocalizzazione(listParziale);
+            }
+
+
         }
     }
 

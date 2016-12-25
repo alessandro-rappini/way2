@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WiFiAsyncTask;
 
 import java.util.LinkedList;
@@ -43,7 +44,7 @@ public class WifiCheif {
         Log.i("info" , io + "");
         Log.i("info" , "---- volta");
         if(stop==false){
-            asyncTask =  new WiFiAsyncTask(con , inte );
+            asyncTask =  new WiFiAsyncTask(con , inte , fine);
         }else {
             Log.i("info" , "FERMO");
         }
@@ -61,7 +62,14 @@ public class WifiCheif {
         if ( contatoreWiFi == precisione ){
             stop=true;
             contatoreWiFi = 0;
-            AggiungiMisurazioni.scopattaWifi();
+            if(fine.equals("misurazioni")){
+                AggiungiMisurazioni.scopattaWifi();
+            }
+
+            if(fine.equals("localizzazione")){
+                PrincipaleLocalizzati.prendiDatiWifi();
+            }
+
         }else {
             chiamaAsync();
         }

@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothObj;
 
 import java.util.HashMap;
@@ -37,13 +38,13 @@ public class BluetoothObjTask extends ListActivity {
 
     private static final long SCAN_PERIOD = 2000;
     private boolean isScanning = false;
-
+    static String fine ;
     LinkedList<BluetoothObj> listBeaconsTemp;
     //HashMap <String , LinkedList> registro ;
 
 
-    public BluetoothObjTask( Context c) {
-
+    public BluetoothObjTask( Context c , String invio) {
+        fine = invio;
         this.con = c;
 
 
@@ -186,7 +187,15 @@ public class BluetoothObjTask extends ListActivity {
             // non pulisco la lista dopo
             appoggioBluetoothObj.prendiIlPrimo();
         }
-        AggiungiMisurazioni.inserisciCheifBlue(listBeaconsTemp);
+        if(fine.equals("misurazioni")){
+            AggiungiMisurazioni.inserisciCheifBlue(listBeaconsTemp);
+        }
+
+        if(fine.equals("localizzazione")){
+            PrincipaleLocalizzati.inserisciCheifBlueLocalizzazione(listBeaconsTemp);
+        }
+
+
     }
 
 

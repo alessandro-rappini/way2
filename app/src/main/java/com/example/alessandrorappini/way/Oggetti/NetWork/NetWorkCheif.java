@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.NetWork.NetWorkObjTask;
 
 import java.util.LinkedList;
@@ -24,12 +25,13 @@ public class NetWorkCheif {
     static int netWorkVarianza;
     static int differenza;
     static int scarto = 0 ;
-
+    static String fine ;
 
     public NetWorkCheif(int pr , Context c, Intent i , String invio){
         precisione = pr;
         con = c ;
         inte = i;
+        fine = invio;
         listPrimaria = new LinkedList<>();
         Log.i("info" , "vado col primo");
         chiamaNetWork();
@@ -37,7 +39,7 @@ public class NetWorkCheif {
 
     private static void chiamaNetWork() {
         contatoreNetWork++;
-        netWorkObjTask = new NetWorkObjTask(con);
+        netWorkObjTask = new NetWorkObjTask(con , fine);
     }
 
     public static void inserisci(int value) {
@@ -81,8 +83,14 @@ public class NetWorkCheif {
             //METODO UFFICIALE SECONDO LA STATISTICA
             netWorkVarianza = scarto / (numeroValori-1);
         }
+        if(fine.equals("misurazioni")){
+            AggiungiMisurazioni.inviaNetWork();
+        }
 
-        AggiungiMisurazioni.inviaNetWork();
+        if(fine.equals("localizzazione")){
+            PrincipaleLocalizzati.prendiDatiNetWork();
+        }
+
     }
 
     public Integer getMediaNetWork() {

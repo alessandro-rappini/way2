@@ -7,6 +7,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 import com.example.alessandrorappini.way.Misurazioni.Misurazioni.Bluetooth.BluetoothObjTask;
 import com.example.alessandrorappini.way.Utilities.ChiamataBold;
 
@@ -22,7 +23,7 @@ public class BluetoothCheif {
     Intent inte;
     static int precisione;
     static LinkedList <LinkedList> listPrimaria;
-
+    static String fine;
     static int contatoreBlue =0 ;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -30,7 +31,7 @@ public class BluetoothCheif {
         precisione = pr;
         con = c ;
         inte = i;
-
+        fine = invio;
         listPrimaria = new LinkedList<>();
         ChiamataBold chiamata = new ChiamataBold(0);
         chiamaBluetooth();
@@ -39,7 +40,7 @@ public class BluetoothCheif {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static void chiamaBluetooth() {
         contatoreBlue++;
-        BluetoothObjTask boat = new BluetoothObjTask(con);
+        BluetoothObjTask boat = new BluetoothObjTask(con , fine);
     }
 
 
@@ -59,9 +60,14 @@ public class BluetoothCheif {
 
     private static void scomapatta() {
 
-        int i=listPrimaria.size();
-        int h=0;
-        AggiungiMisurazioni.scompattaBluetooth();
+//        int i=listPrimaria.size();
+  //      int h=0;
+        if(fine.equals("misurazioni")){
+            AggiungiMisurazioni.scompattaBluetooth();
+        }
+        if(fine.equals("localizzazione")){
+            PrincipaleLocalizzati.prendiDatiBluetooth();
+        }
     }
 
     public LinkedList getLista(int i){

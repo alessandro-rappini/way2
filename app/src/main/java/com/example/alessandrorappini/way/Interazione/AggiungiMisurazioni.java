@@ -65,6 +65,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     static WifiCheif cheifWifi;
     static BluetoothCheif bluetoohCheif;
     static NetWorkCheif netWorkCheif;
+
+    static boolean openDialog = false;
    // WifiManager  wifi;
     //String wifis[];
     //WifiScanReceiver wifiReciever;
@@ -394,6 +396,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
     private void apriDialog(boolean bWifi , boolean bBlue  , boolean bNetWork) {
 
+        openDialog = true;
         dialogRilevazioni = new Dialog(this);
         dialogRilevazioni.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogRilevazioni.setCancelable(false);
@@ -425,29 +428,34 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
     //--------------------- inserisco dentro l'oggetto principale
     public synchronized  static  void inserisciCheifWiFi(LinkedList lista){
-        TextView contatoreTextViewWiFi=(TextView)dialogRilevazioni.findViewById(R.id.contatoreWifi);
-        contatoreWiFi ++ ;
-        String datoWifi =  String.valueOf(contatoreWiFi);
-        contatoreTextViewWiFi.setText(datoWifi);
+        if(openDialog == true){
+            TextView contatoreTextViewWiFi=(TextView)dialogRilevazioni.findViewById(R.id.contatoreWifi);
+            contatoreWiFi ++ ;
+            String datoWifi =  String.valueOf(contatoreWiFi);
+            contatoreTextViewWiFi.setText(datoWifi);
+        }
         cheifWifi.inserisci(lista);
     }
 
     public static void inserisciCheifBlue(LinkedList lista){
-        TextView contatoreTextViewBlue=(TextView)dialogRilevazioni.findViewById(R.id.contatoreBlue);
-        contatoreBlue ++ ;
-        String datoBlue =  String.valueOf(contatoreBlue);
-        contatoreTextViewBlue.setText(datoBlue);
+        if(openDialog == true){
+            TextView contatoreTextViewBlue=(TextView)dialogRilevazioni.findViewById(R.id.contatoreBlue);
+            contatoreBlue ++ ;
+            String datoBlue =  String.valueOf(contatoreBlue);
+            contatoreTextViewBlue.setText(datoBlue);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             BluetoothCheif.inserisci(lista);
         }
     }
 
     public static void inserisciCheifNetWord(int value){
-        TextView contatoreTextViewNetWorg=(TextView)dialogRilevazioni.findViewById(R.id.contatoreNetWork);
-        contatoreNetWorke ++ ;
-        String datoNetWork =  String.valueOf(contatoreNetWorke);
-        contatoreTextViewNetWorg.setText(datoNetWork);
-
+        if(openDialog==true){
+            TextView contatoreTextViewNetWorg=(TextView)dialogRilevazioni.findViewById(R.id.contatoreNetWork);
+            contatoreNetWorke ++ ;
+            String datoNetWork =  String.valueOf(contatoreNetWorke);
+            contatoreTextViewNetWorg.setText(datoNetWork);
+        }
         NetWorkCheif.inserisci(value);
     }
     //-----------------------------------------------------------
@@ -484,6 +492,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     public static synchronized void controllaStatoAnalisi(){
         if (wifiDone == true && blueDone == true && netWorkDone== true){
             dialogRilevazioni.dismiss();
+            openDialog = false;
             Toast.makeText(mContext, "Terminato l'analisi e l'inserimento", Toast.LENGTH_LONG).show();
             contatoreWiFi = 0;
             contatoreBlue = 0;

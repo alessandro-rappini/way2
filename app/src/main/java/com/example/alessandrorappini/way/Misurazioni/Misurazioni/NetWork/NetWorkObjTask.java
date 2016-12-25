@@ -6,6 +6,7 @@ import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 
 import com.example.alessandrorappini.way.Interazione.AggiungiMisurazioni;
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 
 /**
  * Created by Alessandro Rappini on 03/12/2016.
@@ -15,9 +16,10 @@ public  class NetWorkObjTask {
     static Context context;
     TelephonyManager telephonyManager;
     myPhoneStateListener psListener;
+    String fine ;
 
-
-    public NetWorkObjTask(Context c){
+    public NetWorkObjTask(Context c , String invio){
+        fine = invio;
         context = c;
         inizia();
     }
@@ -43,7 +45,14 @@ public  class NetWorkObjTask {
             } else {
                 signalStrengthValue = signalStrength.getCdmaDbm();
             }
-            AggiungiMisurazioni.inserisciCheifNetWord(signalStrengthValue);
+            if(fine.equals("misurazioni")){
+                AggiungiMisurazioni.inserisciCheifNetWord(signalStrengthValue);
+            }
+
+            if(fine.equals("localizzazione")){
+                PrincipaleLocalizzati.inserisciCheifNetWordLocalizzazione(signalStrengthValue);
+            }
+
             /*Log.i("inizio", "**************************");
             Log.i("info " , "Signal Strength : " + signalStrengthValue);
             Log.i("fine", "**************************");*/
