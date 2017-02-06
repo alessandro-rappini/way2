@@ -51,8 +51,26 @@ import static com.example.alessandrorappini.way.R.id.spinnerRP;
 import static com.example.alessandrorappini.way.R.layout.dialog_misurazioni;
 import static com.example.alessandrorappini.way.Utilities.Utilities.getKeyFromValue;
 
-public class AggiungiMisurazioni extends AppCompatActivity {
+    /*
+        Classe molto importante.
+        Tramite questa classe l'utente effettua le rilevazione che poi verranno inserite dentro il databale
+        La classe effettua i pre-caricamenti degli edicici e dei reference poi associati all'edificio scelto.
+        di defoult quando l'activity si apre viene caricato il primo edificio presente in odice cronologico dentro
+        il database, di conseguenza anche i suoi reference point.
+        tramite delle check box , l'utente selezione con quali strumenti effettuare l'analisi.
+        Gli strumenti sono:
+        -   WiFi
+        -   Bluetooth
+        -   rete della sim.
+        Olte questo, l'utente sceglie la precisione con la quale fare la rilevazione, un numero che va da zero a dieci.
+        tale numero sarà il numero di volte con la quale saranno lanciati gli algoritmi di rilevazione.
+        NON è questa classe che possiende gli algoritmi di rilevazione, compressione dei dati e invio sul database.
+        Tali algoritmi sono contenuti all'inteno delle classi contenuti dentro la directoru Misurazioni.
+        Gli algoritmi di localizzazione collaborano con questa classe.
+        Infatti le liste contenenti tutti i dati sono istanziate all'inteno di questa classe.
+     */
 
+public class AggiungiMisurazioni extends AppCompatActivity {
 
     public static String edificio , rpSelezionato;
     JSONParser jsonParser = new JSONParser();
@@ -67,12 +85,8 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     static NetWorkCheif netWorkCheif;
 
     static boolean openDialog = false;
-   // WifiManager  wifi;
-    //String wifis[];
-    //WifiScanReceiver wifiReciever;
 
     static Dialog dialogRilevazioni = null;
-    static Dialog dialogFine = null;
 
     public static Context con;
     public static Intent inte;
@@ -86,28 +100,18 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     public static int contatoreBlue = 0;
     public static int contatoreNetWorke = 0;
 
-
     private static Context mContext;
-
 
     //spinner
     Spinner sp, spRp , mySpinner;
     String[] spinnerArrayEdifici, spinnerArrayEdificiRp;
     HashMap<String, String> spinnerMapEdifici = new HashMap<String, String>();
-    private ArrayAdapter<String> spinnerAdapter;
     Button buttonStart ;
 
-    //global
     String nameSelezionato;
-    Boolean errDialog = false;
-    //istanzia l'oggetto dialogo
-    static Dialog dialog = null;
 
     public static int precisione;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+
     private GoogleApiClient client;
 
     @Override
@@ -117,12 +121,9 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
         mContext = this;
 
-
         buttonStart = (Button) findViewById(R.id.btnStart) ;
-        //wifi=(WifiManager)getSystemService(Context.WIFI_SERVICE);
-        //wifiReciever = new WifiScanReceiver();
         mySpinner=(Spinner) findViewById(R.id.spinnerNum);
-        //cheifWifi = new WifiCheif();                            ***********************************************************
+        // popolo gli edifici all'inteno dello spinner
         new popolaEdifici().execute();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -165,11 +166,12 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         client.disconnect();
     }
 
-
+    /*
+        classe che popola gli edifici dentro lo spinner
+     */
     class popolaEdifici extends AsyncTask<String, String, String> {
 
         protected String doInBackground(String... args) {
-
             //creo la lista di valori
             List<NameValuePair> valori = new ArrayList<NameValuePair>();
             valori.add(new BasicNameValuePair("nome", "nome"));
@@ -181,24 +183,27 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", valori);
             //controllo il risultato
             Log.d("Server ", json.toString());
-
             try {
                 int risp = json.getInt("successo");
                 if (risp == 1) {
+                    // in caso di successo
                     edifici = json.getJSONArray("edificio");
                     lunghezzaArray = edifici.length();
                     spinnerArrayEdifici = new String[edifici.length()];
-
                     for (int i = 0; i < edifici.length(); i++) {
                         //prendo il json i-esimo lo decodifico e lo metto detro a temp
                         JSONObject temp = edifici.getJSONObject(i);
                         //predno l'id , il nome e il tipo per creare l'oggetto
                         String id = temp.getString("idEdificio");
-
                         JSONObject reader = new JSONObject(id);
                         String idEdicio = reader.getString("$id");
                         String nome = temp.getString("nome");
+                        /*
+                            mappa chiave valore dove sono contenuti il nome degli edifici e
+                            l'indentificativo dell'edificio all'inteno del database
+                         */
                         spinnerMapEdifici.put(idEdicio, nome);
+                        // registro dove mi segno le posizioni degli elementi all'intendo della mappa
                         spinnerArrayEdifici[i] = nome;
                     }
                 } else {
@@ -222,6 +227,9 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         }
     }
 
+    /*
+        classe che mi popola lo spinner
+     */
     private void popolaSpinner() {
         sp = (Spinner) findViewById(spinnerEdificio);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArrayEdifici);
@@ -233,6 +241,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 nameSelezionato = sp.getSelectedItem().toString();
+                // carico i reference point dell'edificio selezionato
                 new popolaReferencePoint().execute();
             }
 
@@ -243,15 +252,14 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         });
     }
 
+    /*
+        classe scarica i reference point associati all'edificio selezionato
+     */
     class popolaReferencePoint extends AsyncTask<String, String, String> {
         protected String doInBackground(String... args) {
-
             //creo la lista di valori
             List<NameValuePair> valori = new ArrayList<NameValuePair>();
-
             String key = (String) getKeyFromValue(spinnerMapEdifici, nameSelezionato);
-            Log.i("keyyyyy","KEY");
-            Log.i("key" , key);
             valori.add(new BasicNameValuePair("key", key));
 
             // creo il path
@@ -268,20 +276,13 @@ public class AggiungiMisurazioni extends AppCompatActivity {
                 if (risp == 1) {
                     rpRisp = json.getJSONArray("value");
                     int lung = rpRisp.length();
-
                     spinnerArrayEdificiRp = new String[lung];
                     for (int i = 0; i < rpRisp.length(); i++) {
                         String nome = rpRisp.get(i).toString();
-                        Log.i("nome" , nome);
-
                         spinnerArrayEdificiRp[i] = nome;
                     }
                 } else if(risp == 35){
-                    Log.i("******" , "*****");
-                    Log.i("35" , "35");
-                    Log.i("******" , "*****");
                     errNum="si";
-
                 } else{
                     err = "si";
                     Log.i("info", "non sono presenti edifici");
@@ -289,8 +290,6 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
             return null;
         }
 
@@ -310,13 +309,14 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         }
     }
 
+    /*
+        classe che popola lo spinner
+     */
     private void popolaSpinnerRp() {
         spRp = (Spinner) findViewById(spinnerRP);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArrayEdificiRp);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRp.setAdapter(adapter);
-
-
     }
 
     Thread thread = new Thread() {
@@ -331,17 +331,23 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         }
     };
 
+    /*
+        fine della parte "Automatica" ,  ovvero quella che viene lanciata in automatico all'apertuta della activity
+     */
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void esci(View view) {
         Intent intent = new Intent(this, MenuInterazione.class);
         startActivity(intent);
     }
 
-
+    /*
+        classe che istanzia i vari oggetti che fanno partire gli algoritmi di analisi.
+        tramite delle chechbox.
+        una volta istanziati gli oggetti si pre una dilog che mostra gli avanzamenti delle varie analisi
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void start(View view) {
-        //edificio selezionato al momento dello strart
         edificio = (String) getKeyFromValue(spinnerMapEdifici, nameSelezionato);
-        //
         rpSelezionato = spRp.getSelectedItem().toString();
 
         precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
@@ -372,14 +378,13 @@ public class AggiungiMisurazioni extends AppCompatActivity {
             netWorkDone = false;
         }
 
-
         if (selectedDialog== true){
             apriDialog(localWifi , localBlue , localNet);
         }else {
             Toast.makeText(AggiungiMisurazioni.this, "Seleziona almeno uno strumento di analisi", Toast.LENGTH_LONG).show();
         }
 
-
+        // istanzio gli oggetti di analisi
         if(localWifi == true){
             cheifWifi = new WifiCheif(precisione , con , inte , "misurazioni");
         }
@@ -394,8 +399,11 @@ public class AggiungiMisurazioni extends AppCompatActivity {
 
     }
 
-    private void apriDialog(boolean bWifi , boolean bBlue  , boolean bNetWork) {
+    /*
+        classe che apre la dialog per il controllo degli avanzamenti
+     */
 
+    private void apriDialog(boolean bWifi , boolean bBlue  , boolean bNetWork) {
         openDialog = true;
         dialogRilevazioni = new Dialog(this);
         dialogRilevazioni.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -426,7 +434,12 @@ public class AggiungiMisurazioni extends AppCompatActivity {
         dialogRilevazioni.show();
     }
 
-    //--------------------- inserisco dentro l'oggetto principale
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*
+        Classi che vengono richiamate dagli algorimi di analisi, tali classi inserisco il dato rilevato
+        all'interno di una lista.
+     */
     public synchronized  static  void inserisciCheifWiFi(LinkedList lista){
         if(openDialog == true){
             TextView contatoreTextViewWiFi=(TextView)dialogRilevazioni.findViewById(R.id.contatoreWifi);
@@ -460,6 +473,12 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     }
     //-----------------------------------------------------------
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*
+        Classi che quando gli algoritmi di analisi hanno finito di rilevare i dati inviano le liste
+        a degli appositi algoritmi che analizzano i dati , li comprimono e li inviano
+     */
     public static void scopattaWifi() {
         TextView TextViewWiFi=(TextView)dialogRilevazioni.findViewById(R.id.contatoreWifi);
         String messaggio = "terminata l'analisi";
@@ -470,8 +489,6 @@ public class AggiungiMisurazioni extends AppCompatActivity {
     }
 
     public static void scompattaBluetooth () {
-        /*int i= bluetoohCheif.getLunghezza();
-        Log.i("lunghezza" , "lunghezza " + i);*/
         TextView TextViewBlue=(TextView)dialogRilevazioni.findViewById(R.id.contatoreBlue);
         String messaggio = "terminata l'analisi";
         TextViewBlue.setText(messaggio);
@@ -510,14 +527,7 @@ public class AggiungiMisurazioni extends AppCompatActivity {
                     }
                 }
             };
-
             threadFine.start();
         }
     }
-
-
-
 }
-
-
-

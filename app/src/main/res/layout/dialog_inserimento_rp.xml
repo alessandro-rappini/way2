@@ -14,6 +14,14 @@
         android:minHeight="400dp">
         android:weightSum="1">
 
+        <TextView
+            android:id="@+id/dialog_info1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="Inserisci il nome del referencePoint."/>
+
         <EditText
             android:layout_marginTop="80dp"
             android:layout_width="wrap_content"

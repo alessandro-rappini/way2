@@ -8,6 +8,15 @@ import android.view.View;
 import com.example.alessandrorappini.way.MainActivity;
 import com.example.alessandrorappini.way.R;
 
+/*
+    Menu principale nella parte di interazione con il database.
+    In questa parte l'utente può scegliere come interagire col db
+    Le scelte sono :
+    -   inseriemnto di un nuovo edificio
+    -   inserimento di un nuovo reference point
+    -   rilevazone dei dati
+    -   uscire dal menu di scelta
+ */
 public class MenuInterazione extends AppCompatActivity {
 
     @Override

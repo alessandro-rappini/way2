@@ -21,6 +21,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+    /*
+        Classe creata per interagirre con il database
+        con quelata classe noi inserimo il nome dell'edificio all'interno del dataBase.
+        lo prendiamo tramite una label e lo inseriamo.
+        è presente un controllo che verifica se tale edificio esiste già-
+     */
+
 public class AggiungiEdificio extends AppCompatActivity {
 
     JSONParser jsonParser = new JSONParser();
@@ -32,16 +39,19 @@ public class AggiungiEdificio extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiungi_edificio);
     }
-
+    // pulsante esci. rimanda all'activity prinipiale tra quelle di interazione
     public void esci (View view){
         Intent intent = new Intent(this , MenuInterazione.class);
         startActivity(intent);
     }
 
+    /*
+        prende il nome dell'edificio , controlla che sia divero da null
+        e lo inserice
+     */
     public void invia (View view){
         EditText Enome = (EditText)findViewById(R.id.editText_Nome);
         nome= Enome.getText().toString();
-
         if(nome.length()!=0){
             new inserisciEdificio().execute();
         }else {
@@ -68,8 +78,10 @@ public class AggiungiEdificio extends AppCompatActivity {
             try {
                 int successo = json.getInt("successo");
                 if (successo == 1) {
+                    //successo
                     Log.i("info","INSERITO");
                 } else if (successo == 2) {
+                    // insuccesso, recod già presente
                     Log.i("info","Record già presnte");
                     err="ndd";
                 }
@@ -84,6 +96,9 @@ public class AggiungiEdificio extends AppCompatActivity {
             return null;
         }
 
+        /*
+            metodo utilizzato per la gestione dei toast
+         */
         protected void onPostExecute(String file_url) {
             if(err=="no"){
                 Toast.makeText(AggiungiEdificio.this, "Edificio inserito correttamente", Toast.LENGTH_LONG).show();

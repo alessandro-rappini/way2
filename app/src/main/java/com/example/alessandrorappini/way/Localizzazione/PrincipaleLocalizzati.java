@@ -53,10 +53,18 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     static boolean attesaNet= false;
 
     static LinkedList wifiCompressi ;
-    //array per invio dati //ssid //bssid // rssidMedia //rssidVarianza
+    static LinkedList bluetoothCompressi ;
+    //array per invio dati //ssid //bssid // rssidMedia //rssidVarianza *******WIFI
     static LinkedList  ssid = new LinkedList();
     static LinkedList  bssid = new LinkedList();
     static LinkedList  rssidMedia = new LinkedList();
+
+    //array per invio dati //ssid //bssid // rssidMedia //rssidVarianza ******* Bluetooth
+    static LinkedList  deviceBluetooth = new LinkedList();
+    static LinkedList  rssiBluetooth = new LinkedList();
+
+
+
     LinkedList rssidVarianza;
 
     static JSONArray rpRisp = null;
@@ -157,8 +165,21 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         wifiCompressi = cheifWifiCompresso;
         attesaWifi = false;
         creaArrayWifi();
+    }
 
+    public static void attesaBluetooth(LinkedList<WifiObj> cheifBluetoothCompresso) {
+        bluetoothCompressi = cheifBluetoothCompresso;
+        attesaWifi = false;
+        creaArrayBluetooth();
+    }
 
+    private static void creaArrayBluetooth() {
+        for (int i = 0; i < bluetoothCompressi.size(); i++) {
+            WifiObj appoggio = (WifiObj) bluetoothCompressi.get(i);
+            deviceBluetooth.add(appoggio.getSsid());
+            rssiBluetooth.add( String.valueOf(appoggio.getMediaRssi()));
+        }
+        controlla();
     }
 
     private static void creaArrayWifi() {
@@ -180,13 +201,13 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     public synchronized static void controlla() {
         Log.i("info" , " siamo dentro il controlla");
         if (attesaWifi == false && attesaBlue  == false && attesaNet == false){
-            new inserisciMisurazioniWifi().execute();;
+            new controllaMisurazioniWifi().execute();;
 
         }
     }
 
-    private static class inserisciMisurazioniWifi extends AsyncTask<String, String, String> {
-        public inserisciMisurazioniWifi( ) {
+    private static class controllaMisurazioniWifi extends AsyncTask<String, String, String> {
+        public controllaMisurazioniWifi( ) {
             Log.i("info " , "inizio a mandare su");
         }
 
@@ -207,7 +228,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             // creo il path
             Setpath setpath = new Setpath();
             String path = setpath.getPath();
-            String url = path+"mach/machNomi.php";
+            String url = path+"mach/machNomiWifi.php";
 
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);

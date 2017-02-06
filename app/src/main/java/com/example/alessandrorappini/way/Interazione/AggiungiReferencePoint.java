@@ -31,6 +31,14 @@ import java.util.List;
 import static com.example.alessandrorappini.way.R.layout.dialog_inserimento_rp;
 import static com.example.alessandrorappini.way.Utilities.Utilities.getKeyFromValue;
 
+    /*
+        classe creata per l'inseriemnto dei Reference Point all'interno dei dataBase
+        ogni reference point è associato a un edificio, per rendere tutto il più
+        dinamico possibile e facile per l'utente il nome degli edifici sono pre caricati
+        dentro un menu a tendina, scelto l'dificio di interesse e inserito il nome del reference
+        point all'inteno dell'apposito spazio si può effetuare la chiamata
+     */
+
 public class AggiungiReferencePoint extends AppCompatActivity {
 
     JSONParser jsonParser = new JSONParser();
@@ -42,12 +50,11 @@ public class AggiungiReferencePoint extends AppCompatActivity {
     Spinner sp;
     String[] spinnerArray;
     HashMap<String,String> spinnerMap = new HashMap<String, String>();
-    private ArrayAdapter<String> spinnerAdapter;
-    boolean spinnerPrimo = true;
 
     //global
     String keyIns , nameIns;
     Boolean errDialog = false;
+
     //istanzia l'oggetto dialogo
     static Dialog dialog = null;
 
@@ -55,7 +62,7 @@ public class AggiungiReferencePoint extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiungi_reference_point);
-
+        // appena creo l'activity faccio subito la chiamata per caricare gli edifici dentro lo spinner
         new popolaEdifici().execute();
     }
 
@@ -63,10 +70,6 @@ public class AggiungiReferencePoint extends AppCompatActivity {
 
     class popolaEdifici extends AsyncTask<String, String, String> {
         protected String doInBackground(String... args) {
-            //controllo il risultato
-            Log.i("Server ", "---------");
-            Log.i("Server ", "dentro");
-            Log.i("Server ", "---------");
 
             //creo la lista di valori
             List<NameValuePair> valori = new ArrayList<NameValuePair>();
@@ -83,13 +86,9 @@ public class AggiungiReferencePoint extends AppCompatActivity {
             try {
                 int risp = json.getInt("successo");
                 if (risp == 1) {
+                    // successo
                     edifici = json.getJSONArray("edificio");
-
-                    Log.i("Server ", "---------");
-                    Log.i("Server ", "lunghezza array " + edifici.length());
                     lunghezzaArray = edifici.length();
-                    Log.i("Server ", "---------");
-
                     spinnerArray = new String[edifici.length()];
                     for (int i = 0; i < edifici.length(); i++) {
                         //prendo il json i-esimo lo decodifico e lo metto detro a temp
@@ -99,10 +98,9 @@ public class AggiungiReferencePoint extends AppCompatActivity {
 
                         JSONObject reader = new JSONObject(id);
                         String idEdicio = reader.getString("$id");
-                        Log.i(" idEdicio" ,idEdicio);
                         String nome = temp.getString("nome");
-                        Log.i(" nome Edicio" , nome);
-
+                        // creo un associazione chiave valore per una mappa
+                        // che mi andrà a comporre lo spinner
                         spinnerMap.put(idEdicio ,nome);
                         spinnerArray[i] = nome;
                     }
@@ -126,6 +124,7 @@ public class AggiungiReferencePoint extends AppCompatActivity {
 
     }
 
+    // metodo che popola lo spinner con i dati scaricati dal database
     private void popolaSpinner() {
         sp=(Spinner) findViewById(R.id.spinnerRP);
         ArrayAdapter<String> adapter =new ArrayAdapter<String>(this ,android.R.layout.simple_spinner_item, spinnerArray);
@@ -134,21 +133,20 @@ public class AggiungiReferencePoint extends AppCompatActivity {
     }
 
     public void carica (View view){
-        //int i = sp.getSelectedItemPosition();
         String name = sp.getSelectedItem().toString();
-        String id = spinnerMap.get(name);
         String key = (String) getKeyFromValue(spinnerMap, name);
-        Log.i("chiave" , key);
         visualizzaDialog(key , name);
-
     }
 
+    /*
+        metodo che apre la dialog che acqusirà il nome del reference point
+     */
     private void visualizzaDialog(final String key, final String name) {
         dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(dialog_inserimento_rp);
-
+        // bottone che chiude la dialog
         Button dialogEsci = (Button) dialog.findViewById(R.id.btn_nascondiDialog);
         dialogEsci.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,9 +154,8 @@ public class AggiungiReferencePoint extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-
-
-
+        // bottone che serve per confermare l'invio
+        // si occupa anche dei quisire la stringa (nome reference point) che andremo a inserire
         Button bottone = (Button) dialog.findViewById(R.id.btn_inserisci);
         bottone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +163,7 @@ public class AggiungiReferencePoint extends AppCompatActivity {
                 EditText eMail=(EditText)dialog.findViewById(R.id.edit_user);
                 nameIns=eMail.getText().toString();
                 keyIns = key;
+                //avvia il metodo per la chiamata al server
                 new inserisciRP().execute();
                 ;
             }
@@ -179,12 +177,10 @@ public class AggiungiReferencePoint extends AppCompatActivity {
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("id", keyIns));
             params.add(new BasicNameValuePair("nome", nameIns));
-
             // creo il path
             Setpath setpath =new Setpath();
             String path = setpath.getPath();
             String url = path+"inserisciReferencePoint.php";
-
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
             //controllo il risultato
@@ -239,6 +235,7 @@ public class AggiungiReferencePoint extends AppCompatActivity {
         }
     };
 
+    //pulsare esci che mi ritorna al menu di interazione col database
     public void esci (View view){
         Intent intent = new Intent(this , MenuInterazione.class);
         startActivity(intent);
