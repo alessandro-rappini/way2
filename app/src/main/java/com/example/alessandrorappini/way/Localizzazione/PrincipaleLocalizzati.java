@@ -24,6 +24,7 @@ import com.example.alessandrorappini.way.Server.Setpath;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,6 +59,9 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     static LinkedList  rssidMedia = new LinkedList();
     LinkedList rssidVarianza;
 
+    static JSONArray rpRisp = null;
+
+    static LinkedList rispMachNomiWifi = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,10 +164,10 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     private static void creaArrayWifi() {
         for (int i = 0; i < wifiCompressi.size(); i++) {
             WifiObj appoggio = (WifiObj) wifiCompressi.get(i);
-            int rf=0;
+            /*int rf=0;
             String a = appoggio.getSsid();
             String b = appoggio.getBssid();
-            String c = String.valueOf(appoggio.getMediaRssi());
+            String c = String.valueOf(appoggio.getMediaRssi());*/
 
             ssid.add(appoggio.getSsid());
             bssid.add(appoggio.getBssid());
@@ -182,7 +186,6 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     }
 
     private static class inserisciMisurazioniWifi extends AsyncTask<String, String, String> {
-
         public inserisciMisurazioniWifi( ) {
             Log.i("info " , "inizio a mandare su");
         }
@@ -194,17 +197,17 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
 
             for (int i = 0; i < wifiCompressi.size(); i++) {
+                Log.i("inserisco" , (String ) ssid.get(i));
                 //ssid //bssid // rssidMedia //rssidVarianza
                 params.add(new BasicNameValuePair("typeSsid[]", (String) ssid.get(i)));
-                params.add(new BasicNameValuePair("typeBssid[]", (String) bssid.get(i)));
-                params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMedia.get(i)));
-
+                //params.add(new BasicNameValuePair("typeBssid[]", (String) bssid.get(i)));
+                //params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMedia.get(i)));
             }
 
             // creo il path
             Setpath setpath = new Setpath();
             String path = setpath.getPath();
-            String url = path+"cointrolloDati.php";
+            String url = path+"mach/machNomi.php";
 
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
@@ -214,7 +217,13 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             try {
                 int successo = json.getInt("successo");
                 if (successo == 1) {
-                    Log.i("info","OK");
+                    rpRisp = json.getJSONArray("value");
+
+                    for (int i = 0; i < rpRisp.length(); i++) {
+                        String info = rpRisp.get(i).toString();
+                        Log.i("nome" , info);
+                        rispMachNomiWifi.add(info);
+                    }
                 } else {
                     Log.i("info","ERRORE");
                 }
@@ -239,7 +248,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
     private static void fine() {
         Log.i("********","********");
-        Log.i("finito","ABBIAMO INSERTITO TUTTO");
+        Log.i("finito","ABBIAMO FINITO");
         Log.i("********","********");
 
     }
