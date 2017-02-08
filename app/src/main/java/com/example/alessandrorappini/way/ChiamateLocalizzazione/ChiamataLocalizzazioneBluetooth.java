@@ -51,6 +51,8 @@ public class ChiamataLocalizzazioneBluetooth {
                 Log.i("inserisco dev Blue -->" , (String ) deviceBluetoothR.get(i));
                 //ssid //bssid // rssidMedia //rssidVarianza
                 params.add(new BasicNameValuePair("typeDevice[]", (String) deviceBluetoothR.get(i)));
+
+
                 //params.add(new BasicNameValuePair("typeBssid[]", (String) bssid.get(i)));
                 //params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMedia.get(i)));
             }
