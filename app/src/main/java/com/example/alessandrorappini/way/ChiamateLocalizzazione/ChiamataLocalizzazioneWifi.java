@@ -3,6 +3,7 @@ package com.example.alessandrorappini.way.ChiamateLocalizzazione;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 import com.example.alessandrorappini.way.Server.Setpath;
 
 import org.apache.http.NameValuePair;
@@ -98,6 +99,8 @@ public class ChiamataLocalizzazioneWifi {
 
         protected void onPostExecute(String file_url) {
             //mando l'hasMap a Principlae Localizzati
+            PrincipaleLocalizzati.inserisciHasMapNomiWifi(myMap);
+
         }
 
 

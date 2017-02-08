@@ -1,5 +1,6 @@
 package com.example.alessandrorappini.way.Localizzazione;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneBluetooth;
+import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneWifi;
 import com.example.alessandrorappini.way.Compressori.CompressoreBluetooth;
 import com.example.alessandrorappini.way.Compressori.CompressoreWifi;
 import com.example.alessandrorappini.way.MainActivity;
@@ -63,7 +65,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     public static int precisione;
 
     static boolean attesaWifi= true;
-    static boolean attesaBlue= false;
+    static boolean attesaBlue= true;
     static boolean attesaNet= false;
 
 
@@ -77,13 +79,20 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     //array per invio dati //ssid //bssid // rssidMedia //rssidVarianza ******* Bluetooth
     static LinkedList  deviceBluetooth = new LinkedList();
     static LinkedList  rssiBluetooth = new LinkedList();
+    //dialog
+    static ProgressDialog dialog;
+    //PatterMatch nomi
+    static HashMap hashMapWifi = null;
+    static  HashMap hashMapBluetooth = null;
 
+    //Boolean Controllo
+    //nomi
+    static boolean nomiWifi =true;
+    static boolean nomiBlue =true;
 
 
     LinkedList rssidVarianza;
-
     static JSONArray rpRisp = null;
-
     static LinkedList rispMachNomiWifi = null;
 
     @Override
@@ -96,7 +105,6 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     class popolaEdificiLoc extends AsyncTask<String, String, String> {
-
         protected String doInBackground(String... args) {
             //creo la lista di valori
             List<NameValuePair> valori = new ArrayList<NameValuePair>();
@@ -147,7 +155,6 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                 Toast.makeText(PrincipaleLocalizzati.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
             } else {
                 popolaSpinner();
-
             }
         }
     }
@@ -165,13 +172,10 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 nameSelezionatoEficifio = spEdificio.getSelectedItem().toString();
-
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
-
         });
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,52 +183,69 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         Intent intent = new Intent(this , MainActivity.class);
         startActivity(intent);
     }
+
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void avviaLocalizzati (View view){
+        con = getApplicationContext();
+        inte = getIntent();
         precisione = Integer.parseInt(mySpinner.getSelectedItem().toString());
         final CheckBox checkBoxWIFI = (CheckBox) findViewById(R.id.ckWIFI);
         final CheckBox checkBoxBluetooth = (CheckBox) findViewById(R.id.ckBluetooth);
         final CheckBox checkBoxNetWork = (CheckBox) findViewById(R.id.ckreteCell);
+
+        final CheckBox checkBoxNomi = (CheckBox) findViewById(R.id.ckWNomi);
+        final CheckBox checkBoxFrequenze = (CheckBox) findViewById(R.id.ckFrequenza);
+        final CheckBox checkBoxBoth = (CheckBox) findViewById(R.id.ckNetWork);
+
         boolean localWifi= false;
         boolean localBlue= false;
         boolean localNet= false;
-        if (checkBoxWIFI.isChecked()) {
-            localWifi = true;
-            selectedDialog = true;
-        }
-        if (checkBoxBluetooth.isChecked()) {
-            localBlue = true;
-            selectedDialog = true;
-        }
-        if (checkBoxNetWork.isChecked()) {
-            localNet = true;
-            selectedDialog = true;
+        if(!checkBoxNomi.isChecked() && !checkBoxFrequenze.isChecked() && !checkBoxBoth.isChecked()){
+            Toast.makeText(PrincipaleLocalizzati.this, "Seleziona almeno un pattern di analisi", Toast.LENGTH_LONG).show();
+        }else{
+            if(checkBoxNomi.isChecked()){
+                if (checkBoxWIFI.isChecked()) {
+                    localWifi = true;
+                    selectedDialog = true;
+                }
+                if (checkBoxBluetooth.isChecked()) {
+                    localBlue = true;
+                    selectedDialog = true;
+                }
+                /*if (checkBoxNetWork.isChecked()) {
+                    localNet = true;
+                    selectedDialog = true;
+                }*/
+                if (selectedDialog== true){
+
+                //la dialog è qui
+                 dialog = ProgressDialog.show(this, "Analizi", "Attendere prego", true);
+                //dialog.dismiss()
+
+                }else {
+                    Toast.makeText(PrincipaleLocalizzati.this, "Seleziona almeno uno strumento di analisi", Toast.LENGTH_LONG).show();
+                }
+
+                if(localWifi == true){
+                    nomiWifi = false;
+                    cheifWifi = new WifiCheif(precisione , con , inte , "localizzazione");
+                }
+
+                if (localBlue == true){
+                    nomiBlue = false;
+                    bluetoohCheif = new BluetoothCheif(precisione , con , inte  , "localizzazione");
+                }
+
+                /*if(localNet == true){
+                    netWorkCheif = new NetWorkCheif(precisione , con , inte , "localizzazione");
+                }*/
+            }
+
+
         }
 
-        con = getApplicationContext();
-        inte = getIntent();
 
-        if (selectedDialog== true){
-            /*
-                la dialog è qui
-                ProgressDialog dialog = ProgressDialog.show(this, "Analizi", "Attendere prego", true);
-                dialog.dismiss()
-             */
-        }else {
-            Toast.makeText(PrincipaleLocalizzati.this, "Seleziona almeno uno strumento di analisi", Toast.LENGTH_LONG).show();
-        }
-
-        if(localWifi == true){
-            cheifWifi = new WifiCheif(precisione , con , inte , "localizzazione");
-        }
-
-        if (localBlue == true){
-            bluetoohCheif = new BluetoothCheif(precisione , con , inte  , "localizzazione");
-        }
-
-        if(localNet == true){
-            netWorkCheif = new NetWorkCheif(precisione , con , inte , "localizzazione");
-        }
     }
 
     public synchronized  static  void inserisciCheifWiFiLocalizzazione(LinkedList lista){
@@ -274,7 +295,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
     public static void attesaBluetooth(LinkedList<WifiObj> cheifBluetoothCompresso) {
         bluetoothCompressi = cheifBluetoothCompresso;
-        attesaWifi = false;
+        attesaBlue = false;
         creaArrayBluetooth();
     }
 
@@ -287,8 +308,9 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             deviceBluetooth.add(appoggio.getDevice());
             rssiBluetooth.add( String.valueOf(appoggio.getRssiMedia()));
         }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ChiamataLocalizzazioneBluetooth chiama = new ChiamataLocalizzazioneBluetooth(deviceBluetooth , rssiBluetooth , nome);
-
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     private static void creaArrayWifi() {
@@ -303,23 +325,30 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         String nome = spEdificio.getSelectedItem().toString();
         Log.i("nome" , nome);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ChiamataLocalizzazioneWifi chiamataWifi = new ChiamataLocalizzazioneWifi(ssid , bssid , rssidMedia , lung , nome);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //ChiamataLocalizzazioneWifi chiamataWifi = new ChiamataLocalizzazioneWifi(ssid , bssid , rssidMedia , lung , nome);
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     }
 
 
-    /*public synchronized static void controlla() {
-        Log.i("info" , " siamo dentro il controlla");
-        if (attesaWifi == false && attesaBlue  == false && attesaNet == false){
-            new controllaMisurazioniWifi().execute();
+    public synchronized  static  void inserisciHasMapNomiWifi(HashMap map){
+        hashMapWifi = map;
+        nomiBlue = true;
+        fine();
+    }
 
+    public synchronized  static  void inserisciHasMapNomiBluetooth(HashMap map){
+        hashMapBluetooth = map;
+        nomiWifi = true;
+        fine();
+    }
+
+    synchronized static void fine() {
+        if (nomiWifi == true && nomiBlue == true){
+            Log.i("info" , "ABBIAMO FINITOOOOOOOOOOO");
+            dialog.dismiss();
         }
-    }*/
+
+    }
 
 
 }

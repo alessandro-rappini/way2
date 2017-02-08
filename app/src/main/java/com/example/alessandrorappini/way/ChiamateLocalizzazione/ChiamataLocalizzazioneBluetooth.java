@@ -3,6 +3,7 @@ package com.example.alessandrorappini.way.ChiamateLocalizzazione;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.alessandrorappini.way.Localizzazione.PrincipaleLocalizzati;
 import com.example.alessandrorappini.way.Server.Setpath;
 
 import org.apache.http.NameValuePair;
@@ -26,7 +27,7 @@ public class ChiamataLocalizzazioneBluetooth {
     static LinkedList deviceBluetoothR , rssiBluetoothR;
     static String nomeR;
     static JSONArray rpRisp = null;
-    static HashMap<String, Integer> myMap ;
+    static HashMap<String, Integer> myMapBlue ;
     public  ChiamataLocalizzazioneBluetooth (LinkedList deviceBluetooth, LinkedList rssiBluetooth, String nome){
         deviceBluetoothR = deviceBluetooth;
         rssiBluetoothR = rssiBluetooth;
@@ -51,8 +52,6 @@ public class ChiamataLocalizzazioneBluetooth {
                 Log.i("inserisco dev Blue -->" , (String ) deviceBluetoothR.get(i));
                 //ssid //bssid // rssidMedia //rssidVarianza
                 params.add(new BasicNameValuePair("typeDevice[]", (String) deviceBluetoothR.get(i)));
-
-
                 //params.add(new BasicNameValuePair("typeBssid[]", (String) bssid.get(i)));
                 //params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMedia.get(i)));
             }
@@ -73,14 +72,14 @@ public class ChiamataLocalizzazioneBluetooth {
                     Log.i("---------","-------");
                     Log.i("info" , "risposta");
                     rpRisp = json.getJSONArray("arrayCompresso");
-                   // myMap = new HashMap<String, Integer>();
-                   /* for (int i = 0; i < rpRisp.length(); i = i+2 ) {
+                    myMapBlue = new HashMap<String, Integer>();
+                    for (int i = 0; i < rpRisp.length(); i = i+2 ) {
                         String nomerp = rpRisp.get(i).toString();
                         int value = Integer.parseInt(rpRisp.get(i+1).toString());
                         Log.i("nome" , nomerp);
                         Log.i("value" , value+"");
-                        myMap.put(nomerp,value);
-                    }*/
+                        myMapBlue.put(nomerp,value);
+                    }
                 } else {
                     Log.i("info","ERRORE");
                 }
@@ -95,7 +94,7 @@ public class ChiamataLocalizzazioneBluetooth {
         }
 
         protected void onPostExecute(String file_url) {
-            deviceBluetoothR.clear();
+            PrincipaleLocalizzati.inserisciHasMapNomiBluetooth(myMapBlue);
         }
 
 
