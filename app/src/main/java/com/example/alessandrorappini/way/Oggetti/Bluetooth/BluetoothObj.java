@@ -70,7 +70,7 @@ public class BluetoothObj {
     }
 
     public void eseguiCalcoliRssi() {
-        if(rssiMediaList.size()>1){
+        if(rssiMediaList.size() >0 ){
         boolean controlloUguali = controlloUgualianza();
 
         if(controlloUguali == true){
@@ -95,8 +95,10 @@ public class BluetoothObj {
             rssiVarianza = scarto / (rssiMediaList.size()-1);
             //varianzaRssi = scarto;  --> sbagliato lo tengo solo per capire in un futuro
         }
-    }else {
-        rssiMedia = (int) rssiMediaList.get(0);
+    } else {
+         int i = 0;
+            i++;
+        rssiMedia = (int) rssiList.get(0);
     }
     }
 

@@ -15,10 +15,12 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneWifi;
+import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneBluetooth;
+import com.example.alessandrorappini.way.Compressori.CompressoreBluetooth;
 import com.example.alessandrorappini.way.Compressori.CompressoreWifi;
 import com.example.alessandrorappini.way.MainActivity;
 import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothCheif;
+import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothObj;
 import com.example.alessandrorappini.way.Oggetti.NetWork.NetWorkCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiObj;
@@ -231,7 +233,10 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
     public synchronized  static  void inserisciCheifBlueLocalizzazione(LinkedList lista){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            BluetoothCheif.inserisci(lista);
+            Log.i("info","**************************");
+            Log.i("info","inserisco");
+            Log.i("info","**************************");
+            bluetoohCheif.inserisci(lista);
         }
     }
 
@@ -253,6 +258,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         Log.i("info" , "siamo dentro il prendiDatiBluetooth");
         Log.i("info" , "la lunghezza è --> " + bluetoohCheif.getLunghezza() );
         Log.i("info" , "--------------------------");
+        CompressoreBluetooth.inizia(bluetoohCheif);
     }
 
     public static void prendiDatiNetWork() {
@@ -273,12 +279,16 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     }
 
     private static void creaArrayBluetooth() {
+        Log.i("info" , "iiiiiiiisddnsjnswjfnkew");
+        String nome = spEdificio.getSelectedItem().toString();
+        BluetoothObj appoggio;
         for (int i = 0; i < bluetoothCompressi.size(); i++) {
-            WifiObj appoggio = (WifiObj) bluetoothCompressi.get(i);
-            deviceBluetooth.add(appoggio.getSsid());
-            rssiBluetooth.add( String.valueOf(appoggio.getMediaRssi()));
+            appoggio = (BluetoothObj) bluetoothCompressi.get(i);
+            deviceBluetooth.add(appoggio.getDevice());
+            rssiBluetooth.add( String.valueOf(appoggio.getRssiMedia()));
         }
-        //controlla();
+        ChiamataLocalizzazioneBluetooth chiama = new ChiamataLocalizzazioneBluetooth(deviceBluetooth , rssiBluetooth , nome);
+
     }
 
     private static void creaArrayWifi() {
@@ -290,11 +300,15 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             bssid.add(appoggio.getBssid());
             rssidMedia.add( String.valueOf(appoggio.getMediaRssi()));
         }
-
         String nome = spEdificio.getSelectedItem().toString();
         Log.i("nome" , nome);
-
-        ChiamataLocalizzazioneWifi chiamataWifi = new ChiamataLocalizzazioneWifi(ssid , bssid , rssidMedia , lung , nome);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //ChiamataLocalizzazioneWifi chiamataWifi = new ChiamataLocalizzazioneWifi(ssid , bssid , rssidMedia , lung , nome);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     }
 

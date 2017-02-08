@@ -60,10 +60,14 @@ public class BluetoothCheif {
     private static void scomapatta() {
 
         if(fine.equals("misurazioni")){
+            contatoreBlue =0;
             AggiungiMisurazioni.scompattaBluetooth();
+            listPrimaria.clear();
         }
         if(fine.equals("localizzazione")){
+            contatoreBlue=0;
             PrincipaleLocalizzati.prendiDatiBluetooth();
+            listPrimaria.clear();
         }
     }
 
@@ -72,6 +76,7 @@ public class BluetoothCheif {
     }
 
     public int   getLunghezza(){
+        int i=0;
         return listPrimaria.size();
     }
 }

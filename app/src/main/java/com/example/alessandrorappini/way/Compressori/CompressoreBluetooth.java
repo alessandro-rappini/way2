@@ -12,13 +12,11 @@ import java.util.LinkedList;
 
 public class CompressoreBluetooth {
 
-    static LinkedList totaleB;
-    static int position ;
-    public static String edificio , rpSelezionato , so , nomeDevice , precisione;
-    public static int controllo = 0;
+    static LinkedList totaleR;
+    static int positionR ;
 
     public static void inizia(BluetoothCheif cheifBluetooth) {
-        totaleB = new LinkedList();
+        totaleR = new LinkedList();
         int lunghezza = cheifBluetooth.getLunghezza();
         for (int i=0 ; i < lunghezza ; i++){
             LinkedList appoggio = cheifBluetooth.getLista(i);
@@ -34,14 +32,14 @@ public class CompressoreBluetooth {
         for (int i=0 ; i<bluetoothObj.size() ; i++){
             if (posizione == 0){
                 BluetoothObj l = (BluetoothObj) bluetoothObj.get(i);
-                totaleB.add(l);
+                totaleR.add(l);
             }else {
                 BluetoothObj  l = (BluetoothObj) bluetoothObj.get(i);
                 boolean presente = controlla(l);
                 if(presente == false){
-                    totaleB.add(l);
+                    totaleR.add(l);
                 } else {
-                    BluetoothObj  appoggio = (BluetoothObj) totaleB.get(position);
+                    BluetoothObj  appoggio = (BluetoothObj) totaleR.get(positionR);
                     appoggio.inserisciRssiMedia(l.getRssi());
                 }
             }
@@ -51,25 +49,25 @@ public class CompressoreBluetooth {
     private static boolean controlla(BluetoothObj l) {
         boolean esiste = false;
         String bssid = l.getDevice();
-        for (int i=0 ; i<totaleB.size() ; i++) {
-            BluetoothObj appoggio = (BluetoothObj) totaleB.get(i);
+        for (int i=0 ; i<totaleR.size() ; i++) {
+            BluetoothObj appoggio = (BluetoothObj) totaleR.get(i);
             if (appoggio.getDevice().equals(bssid)) {
                 esiste = true;
-                position = i;
+                positionR = i;
             }
         }
         return esiste;
     }
 
     private static void calcolaMediaVarianza() {
-        for (int i=0 ; i<totaleB.size() ; i++) {
-            BluetoothObj appoggio = (BluetoothObj) totaleB.get(i);
+        for (int i=0 ; i<totaleR.size() ; i++) {
+            BluetoothObj appoggio = (BluetoothObj) totaleR.get(i);
             appoggio.eseguiCalcoliRssi();
         }
         invio();
     }
 
-    private static void invio() {PrincipaleLocalizzati.attesaBluetooth(totaleB); }
+    private static void invio() {PrincipaleLocalizzati.attesaBluetooth(totaleR); }
 
     //totale è la lista comressa
 }
