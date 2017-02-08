@@ -9,10 +9,13 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneWifi;
 import com.example.alessandrorappini.way.Compressori.CompressoreWifi;
 import com.example.alessandrorappini.way.MainActivity;
 import com.example.alessandrorappini.way.Oggetti.Bluetooth.BluetoothCheif;
@@ -29,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +45,14 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     public static boolean selectedDialog= false;
 
     Spinner  mySpinner;
+    static Spinner  spEdificio;
+    int lArray;
+    JSONArray edificiSel = null;
+    String[] spinnerArrayEdificiSel;
+    HashMap<String, String> spinnerMapEdificiSel = new HashMap<String, String>();
+    String err = "no";
+
+    String nameSelezionatoEficifio;
 
     static WifiCheif cheifWifi;
     static BluetoothCheif bluetoohCheif;
@@ -51,6 +63,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     static boolean attesaWifi= true;
     static boolean attesaBlue= false;
     static boolean attesaNet= false;
+
 
     static LinkedList wifiCompressi ;
     static LinkedList bluetoothCompressi ;
@@ -76,8 +89,90 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principale_localizzati);
         mySpinner=(Spinner) findViewById(R.id.spinnerNum);
+        new popolaEdificiLoc().execute();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    class popolaEdificiLoc extends AsyncTask<String, String, String> {
+
+        protected String doInBackground(String... args) {
+            //creo la lista di valori
+            List<NameValuePair> valori = new ArrayList<NameValuePair>();
+            valori.add(new BasicNameValuePair("nome", "nome"));
+            // creo il path
+            Setpath setpath = new Setpath();
+            String path = setpath.getPath();
+            String url = path + "getNomeEdifici.php";
+            // svolgo la chiamata
+            JSONObject json = jsonParser.makeHttpRequest(url, "POST", valori);
+            //controllo il risultato
+            Log.d("Server ", json.toString());
+            try {
+                int risp = json.getInt("successo");
+                if (risp == 1) {
+                    // in caso di successo
+                    edificiSel = json.getJSONArray("edificio");
+                    lArray = edificiSel.length();
+                    spinnerArrayEdificiSel = new String[edificiSel.length()];
+                    for (int i = 0; i < edificiSel.length(); i++) {
+                        //prendo il json i-esimo lo decodifico e lo metto detro a temp
+                        JSONObject temp = edificiSel.getJSONObject(i);
+                        //predno l'id , il nome e il tipo per creare l'oggetto
+                        String id = temp.getString("idEdificio");
+                        JSONObject reader = new JSONObject(id);
+                        String idEdicio = reader.getString("$id");
+                        String nome = temp.getString("nome");
+                        /*
+                            mappa chiave valore dove sono contenuti il nome degli edifici e
+                            l'indentificativo dell'edificio all'inteno del database
+                         */
+                        spinnerMapEdificiSel.put(idEdicio, nome);
+                        // registro dove mi segno le posizioni degli elementi all'intendo della mappa
+                        spinnerArrayEdificiSel[i] = nome;
+                    }
+                } else {
+                    err = "si";
+                    Log.i("info", "non sono presenti edifici");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        protected void onPostExecute(String file_url) {
+            if (err == "si") {
+                Toast.makeText(PrincipaleLocalizzati.this, "Errore caricamento Dati", Toast.LENGTH_LONG).show();
+            } else {
+                popolaSpinner();
+
+            }
+        }
+    }
+    /*
+        classe che mi popola lo spinner
+     */
+    private void popolaSpinner() {
+        spEdificio = (Spinner )  findViewById(R.id.vadoDiSpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArrayEdificiSel);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spEdificio.setAdapter(adapter);
+        nameSelezionatoEficifio = spEdificio.getSelectedItem().toString();
+
+        spEdificio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                nameSelezionatoEficifio = spEdificio.getSelectedItem().toString();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+
+        });
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     public void esci (View view){
         Intent intent = new Intent(this , MainActivity.class);
         startActivity(intent);
@@ -108,7 +203,11 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         inte = getIntent();
 
         if (selectedDialog== true){
-
+            /*
+                la dialog è qui
+                ProgressDialog dialog = ProgressDialog.show(this, "Analizi", "Attendere prego", true);
+                dialog.dismiss()
+             */
         }else {
             Toast.makeText(PrincipaleLocalizzati.this, "Seleziona almeno uno strumento di analisi", Toast.LENGTH_LONG).show();
         }
@@ -179,98 +278,34 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             deviceBluetooth.add(appoggio.getSsid());
             rssiBluetooth.add( String.valueOf(appoggio.getMediaRssi()));
         }
-        controlla();
+        //controlla();
     }
 
     private static void creaArrayWifi() {
+        int lung = wifiCompressi.size();
         for (int i = 0; i < wifiCompressi.size(); i++) {
             WifiObj appoggio = (WifiObj) wifiCompressi.get(i);
-            /*int rf=0;
-            String a = appoggio.getSsid();
-            String b = appoggio.getBssid();
-            String c = String.valueOf(appoggio.getMediaRssi());*/
 
             ssid.add(appoggio.getSsid());
             bssid.add(appoggio.getBssid());
             rssidMedia.add( String.valueOf(appoggio.getMediaRssi()));
         }
-        controlla();
+
+        String nome = spEdificio.getSelectedItem().toString();
+        Log.i("nome" , nome);
+
+        ChiamataLocalizzazioneWifi chiamataWifi = new ChiamataLocalizzazioneWifi(ssid , bssid , rssidMedia , lung , nome);
+
     }
 
 
-    public synchronized static void controlla() {
+    /*public synchronized static void controlla() {
         Log.i("info" , " siamo dentro il controlla");
         if (attesaWifi == false && attesaBlue  == false && attesaNet == false){
-            new controllaMisurazioniWifi().execute();;
+            new controllaMisurazioniWifi().execute();
 
         }
-    }
-
-    private static class controllaMisurazioniWifi extends AsyncTask<String, String, String> {
-        public controllaMisurazioniWifi( ) {
-            Log.i("info " , "inizio a mandare su");
-        }
-
-        protected String doInBackground(String... args) {
-
-            //creo la lista con tutti i parametri
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
+    }*/
 
 
-            for (int i = 0; i < wifiCompressi.size(); i++) {
-                Log.i("inserisco" , (String ) ssid.get(i));
-                //ssid //bssid // rssidMedia //rssidVarianza
-                params.add(new BasicNameValuePair("typeSsid[]", (String) ssid.get(i)));
-                //params.add(new BasicNameValuePair("typeBssid[]", (String) bssid.get(i)));
-                //params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMedia.get(i)));
-            }
-
-            // creo il path
-            Setpath setpath = new Setpath();
-            String path = setpath.getPath();
-            String url = path+"mach/machNomiWifi.php";
-
-            // svolgo la chiamata
-            JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
-            //controllo il risultato
-            Log.i("ris","risultato");
-            Log.d("Server ", json.toString());
-            try {
-                int successo = json.getInt("successo");
-                if (successo == 1) {
-                    rpRisp = json.getJSONArray("value");
-
-                    for (int i = 0; i < rpRisp.length(); i++) {
-                        String info = rpRisp.get(i).toString();
-                        Log.i("nome" , info);
-                        rispMachNomiWifi.add(info);
-                    }
-                } else {
-                    Log.i("info","ERRORE");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        protected void doInBackground(){
-            Log.i("invio" , "invio");
-        }
-
-        protected void onPostExecute(String file_url) {
-            finito();
-        }
-
-        public synchronized void finito(){
-            fine();
-        }
-    }
-
-    private static void fine() {
-        Log.i("********","********");
-        Log.i("finito","ABBIAMO FINITO");
-        Log.i("********","********");
-
-    }
 }

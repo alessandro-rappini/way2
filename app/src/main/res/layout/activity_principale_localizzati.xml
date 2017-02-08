@@ -23,6 +23,24 @@
             android:id="@+id/textView"
             android:textColor="@android:color/black" />
 
+        <TextView
+            android:text="Seleziona un edificio"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/dd"
+            android:textColor="@android:color/black" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/vadoDiSpinner"
+            />
+
 
         <TextView
             android:text="Seleziona con quali strumenti ti vuoi localizzare"
@@ -75,6 +93,38 @@
             android:drawSelectorOnTop="true"
             android:entries="@array/precisione"
             />
+
+        <TextView
+            android:text="Seleziona l'algoritmo di pattern matching"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/textView5"
+            android:textColor="@android:color/black" />
+
+        <CheckBox
+            android:id="@+id/ckWNomi"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nomi" />
+
+        <CheckBox
+            android:id="@+id/ckFrequenza"
+            android:layout_marginLeft="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Frequenza" />
+
+        <CheckBox
+            android:id="@+id/ckNetWork"
+            android:layout_marginLeft="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Entrambi" />
 
         <Button
             android:layout_width="200dip"
