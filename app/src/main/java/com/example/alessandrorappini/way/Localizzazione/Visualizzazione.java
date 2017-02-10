@@ -14,26 +14,33 @@ import java.util.LinkedList;
 
 public class Visualizzazione extends AppCompatActivity {
 
-    static TextView textNomiWifi , textNomiBluetooth , textFrequenzeWifi;
+    static TextView textNomiWifi , textNomiBluetooth , textFrequenzeWifi ,textFrequenzeBluetooth;
 
     static HashMap decisioni;
     static  HashMap hashMapNomiWifi = null;
     static  HashMap hashMapNomiBluetooth = null;
     static  HashMap hashMapFrequenzeWifi = null;
+    static  HashMap hashMapFrequenzeBluetooth = null;
+    static Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualizzazione);
 
-        Bundle bundle = this.getIntent().getExtras();
+        bundle = this.getIntent().getExtras();
         decisioni = (HashMap) bundle.getSerializable("generaleAnalisi");
+        /*
         hashMapNomiWifi = (HashMap) bundle.getSerializable("hashMapNomiWifi");
         hashMapNomiBluetooth = (HashMap) bundle.getSerializable("hashMapNomiBluetooth");
         hashMapFrequenzeWifi = (HashMap) bundle.getSerializable("hashMapFrequenzeWifi");
+        hashMapFrequenzeBluetooth = (HashMap) bundle.getSerializable("hashMapFrequenzeBluetooth");
+        */
+
         textNomiWifi = (TextView)findViewById(R.id.NomiWifi);
         textNomiBluetooth = (TextView)findViewById(R.id.NomiBluetooth);
         textFrequenzeWifi = (TextView)findViewById(R.id.frequenzeWifi);
+        textFrequenzeBluetooth = (TextView)findViewById(R.id.frequenzeBluetooth);
 
         visualizza();
     }
@@ -48,13 +55,15 @@ public class Visualizzazione extends AppCompatActivity {
         if(nomi == true){
             boolean nomiWifi = (boolean) decisioni.get("WiFi");
             if (nomiWifi){
+                hashMapNomiWifi = (HashMap) bundle.getSerializable("hashMapNomiWifi");
                 String miglioreNomiWifi = dammiIlMigliore(hashMapNomiWifi);
-                textNomiWifi.setText(miglioreNomiWifi);
+                textNomiWifi.setText("Wifi : " + miglioreNomiWifi);
             }
             boolean nomiBluetoot = (boolean) decisioni.get("Bluetootk");
             if (nomiBluetoot){
+                hashMapNomiBluetooth = (HashMap) bundle.getSerializable("hashMapNomiBluetooth");
                 String miglioreNomiBluetootk = dammiIlMigliore(hashMapNomiBluetooth);
-                textNomiBluetooth.setText(miglioreNomiBluetootk);
+                textNomiBluetooth.setText("Bluetooth : " + miglioreNomiBluetootk);
             }
         }
 
@@ -62,10 +71,17 @@ public class Visualizzazione extends AppCompatActivity {
         if(frequenze == true){
             boolean frequenzeWifi = (boolean) decisioni.get("WiFi");
             if (frequenzeWifi){
+                hashMapFrequenzeWifi = (HashMap) bundle.getSerializable("hashMapFrequenzeWifi");
                 String miglioreFrequenzeWifi = dammiIlMigliore(hashMapFrequenzeWifi);
-                textFrequenzeWifi.setText(miglioreFrequenzeWifi);
+                textFrequenzeWifi.setText("Wifi : " + miglioreFrequenzeWifi);
             }
-            //boolean frequenzeBluetootk = (boolean) decisioni.get("Bluetootk");
+
+            boolean frequenzeBluetootk = (boolean) decisioni.get("Bluetootk");
+            if (frequenzeBluetootk){
+                hashMapFrequenzeBluetooth = (HashMap) bundle.getSerializable("hashMapFrequenzeBluetooth");
+                String miglioreFrequenzeBluetooth = dammiIlMigliore(hashMapFrequenzeBluetooth);
+                textFrequenzeBluetooth.setText("Bluetooth : " + miglioreFrequenzeBluetooth);
+            }
         }
 /*
         boolean both = (boolean) decisioni.get("both");

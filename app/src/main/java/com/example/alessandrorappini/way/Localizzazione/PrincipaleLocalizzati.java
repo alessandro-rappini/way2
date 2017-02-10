@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeBluetooth;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeWifi;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneNomiBluetooth;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneNomiWifi;
@@ -308,6 +309,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ChiamataLocalizzazioneNomiBluetooth chiamaBluetoothNomi = new ChiamataLocalizzazioneNomiBluetooth(deviceBluetooth , rssiBluetooth , nome);
+        ChiamataLocalizzazioneFrequenzeBluetooth chiamaBluetoothFrequenze = new ChiamataLocalizzazioneFrequenzeBluetooth(deviceBluetooth , rssiBluetooth , nome);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
@@ -348,6 +350,15 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         i++;
         fine();
     }
+
+    public static synchronized    void inserisciHasMapFrequenzeBluetooth(HashMap map){
+        frequenzeBlue = true;
+        hashMapFrequenzeBluetooth = map;
+        int i =0;
+        i++;
+        fine();
+    }
+
 /*
     public synchronized  static  void inserisciHasMapFrequenzeBluetooth(HashMap map){
         frequenzeBlue = true;
@@ -356,7 +367,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     }*/
 
      synchronized static void fine() {
-        if (nomiWifi == true && nomiBlue == true /*&& frequenzeWifi == true && frequenzeBlue*/){
+        if (nomiWifi == true && nomiBlue == true && frequenzeWifi == true && frequenzeBlue == true){
             //generaleAnalisi --> la mappa con dentro i valori che l'utente ha deciso di visualizzare
             //hashMapNomiBluetooth  --> mappa con dentro i nomi rilevati dalla frequenza bluetooth
             //hashMapNomiWifi --> mappa con dentro i nomi rilevati dalla frequenza bluetooth
@@ -366,6 +377,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             bundle.putSerializable("hashMapNomiBluetooth" ,  hashMapNomiBluetooth);
             bundle.putSerializable("hashMapNomiWifi" ,  hashMapNomiWifi);
             bundle.putSerializable("hashMapFrequenzeWifi" ,  hashMapFrequenzeWifi);
+            bundle.putSerializable("hashMapFrequenzeBluetooth" ,  hashMapFrequenzeBluetooth);
             dialog.dismiss();
             Context c = getAppContext();
             Intent intent = new Intent(c , Visualizzazione.class);

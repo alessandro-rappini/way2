@@ -75,7 +75,7 @@
             android:text="..."/>
 
         <TextView
-            android:id="@+id/dialog_info7"
+            android:id="@+id/frequenzeBluetooth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
