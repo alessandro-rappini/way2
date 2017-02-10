@@ -84,6 +84,15 @@
             android:text="..."/>
 
         <TextView
+            android:id="@+id/frequenzeCell"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="15dp"
+            android:layout_marginTop="20dp"
+            android:text="..."/>
+
+        <TextView
             android:id="@+id/dialog_info8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

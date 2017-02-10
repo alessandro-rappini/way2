@@ -14,13 +14,14 @@ import java.util.LinkedList;
 
 public class Visualizzazione extends AppCompatActivity {
 
-    static TextView textNomiWifi , textNomiBluetooth , textFrequenzeWifi ,textFrequenzeBluetooth;
+    static TextView textNomiWifi , textNomiBluetooth , textFrequenzeWifi ,textFrequenzeBluetooth ,textFrequenzeCell;
 
     static HashMap decisioni;
     static  HashMap hashMapNomiWifi = null;
     static  HashMap hashMapNomiBluetooth = null;
     static  HashMap hashMapFrequenzeWifi = null;
     static  HashMap hashMapFrequenzeBluetooth = null;
+    static  HashMap hashMapFrequenzeCell = null;
     static Bundle bundle;
 
     @Override
@@ -41,6 +42,7 @@ public class Visualizzazione extends AppCompatActivity {
         textNomiBluetooth = (TextView)findViewById(R.id.NomiBluetooth);
         textFrequenzeWifi = (TextView)findViewById(R.id.frequenzeWifi);
         textFrequenzeBluetooth = (TextView)findViewById(R.id.frequenzeBluetooth);
+        textFrequenzeCell = (TextView)findViewById(R.id.frequenzeCell);
 
         visualizza();
     }
@@ -82,6 +84,15 @@ public class Visualizzazione extends AppCompatActivity {
                 String miglioreFrequenzeBluetooth = dammiIlMigliore(hashMapFrequenzeBluetooth);
                 textFrequenzeBluetooth.setText("Bluetooth : " + miglioreFrequenzeBluetooth);
             }
+
+            boolean frequenzeCell = (boolean) decisioni.get("NetWork");
+            if (frequenzeCell){
+                hashMapFrequenzeCell = (HashMap) bundle.getSerializable("hashMapFrequenzeCell");
+                String miglioreFrequenzeBluetooth = dammiIlMigliore(hashMapFrequenzeCell);
+                textFrequenzeCell.setText("NetWork : " + miglioreFrequenzeBluetooth);
+            }
+
+
         }
 /*
         boolean both = (boolean) decisioni.get("both");

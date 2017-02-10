@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeBluetooth;
+import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeNetWork;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeWifi;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneNomiBluetooth;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneNomiWifi;
@@ -92,6 +93,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     static  HashMap hashMapNomiBluetooth = null;
     static  HashMap hashMapFrequenzeWifi = null;
     static  HashMap hashMapFrequenzeBluetooth = null;
+    static  HashMap hashMapFrequenzeCell = null;
 
     //Boolean Controllo
     //nomi
@@ -100,6 +102,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
     static boolean frequenzeWifi =true;
     static boolean frequenzeBlue =true;
+    static boolean frequenzeCell =true;
     //both
     /*static boolean nomiWifi =true;
     static boolean nomiBlue =true;*/
@@ -243,6 +246,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                 }else {
                     generaleAnalisi.put("WiFi" , false) ;
                 }
+
                 if (checkBoxBluetooth.isChecked()) {
                     generaleAnalisi.put("Bluetootk" , true) ;
                     nomiBlue = false;
@@ -253,6 +257,17 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                 }else {
                     generaleAnalisi.put("Bluetootk" , false) ;
                 }
+                ///////svegliati
+                if (checkBoxNetWork.isChecked()) {
+                    generaleAnalisi.put("NetWork" , true) ;
+                    frequenzeCell = false;
+                    netWorkCheif = new NetWorkCheif(precisione , con , inte  , "localizzazione");
+                    //localBlue = true;
+                    selectedDialog = true;
+                }else {
+                    generaleAnalisi.put("NetWork" , false) ;
+                }
+
                 if (selectedDialog== true){
                  dialog = ProgressDialog.show(this, "Analisi", "Attendere prego", true);
                 }else {
@@ -272,7 +287,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     }
 
     public synchronized  static  void inserisciCheifNetWordLocalizzazione(int value){
-        NetWorkCheif.inserisci(value);
+        netWorkCheif.inserisci(value);
     }
 
     public static void prendiDatiWifi() {
@@ -285,6 +300,10 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     }
 
     public static void prendiDatiNetWork() {
+        int mediaNetWork = netWorkCheif.getMediaNetWork();
+        String nome = spEdificio.getSelectedItem().toString();
+        ChiamataLocalizzazioneFrequenzeNetWork chiamataLocalizzazioneFrequenzeNetWork =new ChiamataLocalizzazioneFrequenzeNetWork(mediaNetWork , nome);
+
     }
 
     public static void attesaWifi(LinkedList<WifiObj> cheifWifiCompresso) {
@@ -346,16 +365,18 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     public static synchronized    void inserisciHasMapFrequenzeWifi(HashMap map){
         frequenzeWifi = true;
         hashMapFrequenzeWifi = map;
-        int i =0;
-        i++;
         fine();
     }
 
     public static synchronized    void inserisciHasMapFrequenzeBluetooth(HashMap map){
         frequenzeBlue = true;
         hashMapFrequenzeBluetooth = map;
-        int i =0;
-        i++;
+        fine();
+    }
+
+    public static synchronized    void inserisciHasMapFrequenzeNetWork(HashMap map){
+        frequenzeCell = true;
+        hashMapFrequenzeCell = map;
         fine();
     }
 
@@ -367,7 +388,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     }*/
 
      synchronized static void fine() {
-        if (nomiWifi == true && nomiBlue == true && frequenzeWifi == true && frequenzeBlue == true){
+        if (nomiWifi == true && nomiBlue == true && frequenzeWifi == true && frequenzeBlue == true && frequenzeCell == true){
             //generaleAnalisi --> la mappa con dentro i valori che l'utente ha deciso di visualizzare
             //hashMapNomiBluetooth  --> mappa con dentro i nomi rilevati dalla frequenza bluetooth
             //hashMapNomiWifi --> mappa con dentro i nomi rilevati dalla frequenza bluetooth
@@ -378,6 +399,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             bundle.putSerializable("hashMapNomiWifi" ,  hashMapNomiWifi);
             bundle.putSerializable("hashMapFrequenzeWifi" ,  hashMapFrequenzeWifi);
             bundle.putSerializable("hashMapFrequenzeBluetooth" ,  hashMapFrequenzeBluetooth);
+            bundle.putSerializable("hashMapFrequenzeCell" ,  hashMapFrequenzeCell);
             dialog.dismiss();
             Context c = getAppContext();
             Intent intent = new Intent(c , Visualizzazione.class);
