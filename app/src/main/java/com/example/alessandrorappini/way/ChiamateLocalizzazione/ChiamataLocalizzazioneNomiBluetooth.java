@@ -23,12 +23,12 @@ import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.Wif
  * Created by Alessandro Rappini on 08/02/2017.
  */
 
-public class ChiamataLocalizzazioneBluetooth {
+public class ChiamataLocalizzazioneNomiBluetooth {
     static LinkedList deviceBluetoothR , rssiBluetoothR;
     static String nomeR;
     static JSONArray rpRisp = null;
     static HashMap<String, Integer> myMapBlue ;
-    public  ChiamataLocalizzazioneBluetooth (LinkedList deviceBluetooth, LinkedList rssiBluetooth, String nome){
+    public ChiamataLocalizzazioneNomiBluetooth(LinkedList deviceBluetooth, LinkedList rssiBluetooth, String nome){
         deviceBluetoothR = deviceBluetooth;
         rssiBluetoothR = rssiBluetooth;
         nomeR = nome;

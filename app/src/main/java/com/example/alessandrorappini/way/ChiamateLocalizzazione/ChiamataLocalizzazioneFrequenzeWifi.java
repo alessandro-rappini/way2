@@ -20,16 +20,16 @@ import java.util.List;
 import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo.jsonParser;
 
 /**
- * Created by Alessandro Rappini on 08/02/2017.
+ * Created by Alessandro Rappini on 09/02/2017.
  */
 
-public class ChiamataLocalizzazioneWifi {
+public class ChiamataLocalizzazioneFrequenzeWifi {
     static LinkedList ssidR , bssidR , rssidMediaR;
     static int lungR;
     static String nomeR;
     static JSONArray rpRisp = null;
-    static  HashMap<String, Integer> myMap ;
-    public  ChiamataLocalizzazioneWifi(LinkedList ssid, LinkedList bssid, LinkedList rssidMedia, int lung, String nome){
+    static HashMap<String, Integer> myMap ;
+    public ChiamataLocalizzazioneFrequenzeWifi(LinkedList ssid, LinkedList bssid, LinkedList rssidMedia, int lung, String nome){
         ssidR = ssid;
         bssidR = bssid;
         rssidMediaR = rssidMedia;
@@ -37,11 +37,11 @@ public class ChiamataLocalizzazioneWifi {
         nomeR = nome;
         lungR =lung;
 
-        new controllaMisurazioniWifi().execute();
+        new controllaMisurazioniFrequenzeWifi().execute();
     }
 
-    private static class controllaMisurazioniWifi extends AsyncTask<String, String, String> {
-        public controllaMisurazioniWifi( ) {
+    private static class controllaMisurazioniFrequenzeWifi extends AsyncTask<String, String, String> {
+        public controllaMisurazioniFrequenzeWifi( ) {
             Log.i("nomeR" , nomeR);
             Log.i("info " , "inizio a mandare su");
         }
@@ -50,20 +50,22 @@ public class ChiamataLocalizzazioneWifi {
 
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
+            //nome palazzina
             params.add(new BasicNameValuePair("nome", nomeR));
 
             for (int i = 0; i < lungR; i++) {
-                Log.i("inserisco" , (String ) bssidR.get(i));
+
                 //ssid //bssid // rssidMedia //rssidVarianza
+                Log.i("typeBssid" , (String) bssidR.get(i));
                 params.add(new BasicNameValuePair("typeBssid[]", (String) bssidR.get(i)));
-                //params.add(new BasicNameValuePair("typeBssid[]", (String) bssid.get(i)));
-                //params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMedia.get(i)));
+                Log.i("typeRssidMedia" , (String) rssidMediaR.get(i));
+                params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMediaR.get(i)));
             }
 
             // creo il path
             Setpath setpath = new Setpath();
             String path = setpath.getPath();
-            String url = path+"mach/machNomiWifi.php";
+            String url = path+"mach/machFrequenzeWifi.php";
 
             // svolgo la chiamata
             JSONObject json = jsonParser.makeHttpRequest(url, "POST", params);
@@ -99,11 +101,11 @@ public class ChiamataLocalizzazioneWifi {
 
         protected void onPostExecute(String file_url) {
             //mando l'hasMap a Principlae Localizzati
-            PrincipaleLocalizzati.inserisciHasMapNomiWifi(myMap);
+            Log.i("info" , "finitooo");
+            PrincipaleLocalizzati.inserisciHasMapFrequenzeWifi(myMap);
 
         }
 
 
     }
 }
-
