@@ -103,7 +103,7 @@
             android:text="Algoritmo pattern matching su entrambi gli algoritmi implementati"/>
 
         <TextView
-            android:id="@+id/dialog_info9"
+            android:id="@+id/textAlgoritmo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -112,7 +112,7 @@
             android:text="..."/>
 
         <TextView
-            android:id="@+id/dialog_info10"
+            android:id="@+id/textAlgoritmoF"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

@@ -8,13 +8,14 @@ import android.widget.TextView;
 
 import com.example.alessandrorappini.way.MainActivity;
 import com.example.alessandrorappini.way.R;
+import com.example.alessandrorappini.way.Utilities.OggettoBoth;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Visualizzazione extends AppCompatActivity {
 
-    static TextView textNomiWifi , textNomiBluetooth , textFrequenzeWifi ,textFrequenzeBluetooth ,textFrequenzeCell;
+    static TextView textNomiWifi , textNomiBluetooth , textFrequenzeWifi ,textFrequenzeBluetooth ,textFrequenzeCell , textAlgoBest , textAlgoBestFrequenze ;
 
     static HashMap decisioni;
     static  HashMap hashMapNomiWifi = null;
@@ -23,6 +24,9 @@ public class Visualizzazione extends AppCompatActivity {
     static  HashMap hashMapFrequenzeBluetooth = null;
     static  HashMap hashMapFrequenzeCell = null;
     static Bundle bundle;
+    static int totAnalisi;
+
+    static LinkedList  bothList ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,7 @@ public class Visualizzazione extends AppCompatActivity {
         setContentView(R.layout.activity_visualizzazione);
 
         bundle = this.getIntent().getExtras();
+
         decisioni = (HashMap) bundle.getSerializable("generaleAnalisi");
         /*
         hashMapNomiWifi = (HashMap) bundle.getSerializable("hashMapNomiWifi");
@@ -43,6 +48,9 @@ public class Visualizzazione extends AppCompatActivity {
         textFrequenzeWifi = (TextView)findViewById(R.id.frequenzeWifi);
         textFrequenzeBluetooth = (TextView)findViewById(R.id.frequenzeBluetooth);
         textFrequenzeCell = (TextView)findViewById(R.id.frequenzeCell);
+        textAlgoBest = (TextView)findViewById(R.id.textAlgoritmo);
+        textAlgoBestFrequenze = (TextView)findViewById(R.id.textAlgoritmoF);
+        bothList = new LinkedList();
 
         visualizza();
     }
@@ -58,13 +66,17 @@ public class Visualizzazione extends AppCompatActivity {
             boolean nomiWifi = (boolean) decisioni.get("WiFi");
             if (nomiWifi){
                 hashMapNomiWifi = (HashMap) bundle.getSerializable("hashMapNomiWifi");
-                String miglioreNomiWifi = dammiIlMigliore(hashMapNomiWifi);
+                int o=0;
+                o++;
+                String miglioreNomiWifi = dammiIlMigliore(hashMapNomiWifi , "nomiWifi");
                 textNomiWifi.setText("Wifi : " + miglioreNomiWifi);
             }
             boolean nomiBluetoot = (boolean) decisioni.get("Bluetootk");
             if (nomiBluetoot){
                 hashMapNomiBluetooth = (HashMap) bundle.getSerializable("hashMapNomiBluetooth");
-                String miglioreNomiBluetootk = dammiIlMigliore(hashMapNomiBluetooth);
+                int o=0;
+                o++;
+                String miglioreNomiBluetootk = dammiIlMigliore(hashMapNomiBluetooth , "nomiBluetooth");
                 textNomiBluetooth.setText("Bluetooth : " + miglioreNomiBluetootk);
             }
         }
@@ -74,37 +86,77 @@ public class Visualizzazione extends AppCompatActivity {
             boolean frequenzeWifi = (boolean) decisioni.get("WiFi");
             if (frequenzeWifi){
                 hashMapFrequenzeWifi = (HashMap) bundle.getSerializable("hashMapFrequenzeWifi");
-                String miglioreFrequenzeWifi = dammiIlMigliore(hashMapFrequenzeWifi);
+                int o=0;
+                o++;
+                String miglioreFrequenzeWifi = dammiIlMigliore(hashMapFrequenzeWifi , "frequenzeWifi");
                 textFrequenzeWifi.setText("Wifi : " + miglioreFrequenzeWifi);
             }
 
             boolean frequenzeBluetootk = (boolean) decisioni.get("Bluetootk");
             if (frequenzeBluetootk){
                 hashMapFrequenzeBluetooth = (HashMap) bundle.getSerializable("hashMapFrequenzeBluetooth");
-                String miglioreFrequenzeBluetooth = dammiIlMigliore(hashMapFrequenzeBluetooth);
+                int o=0;
+                o++;
+                String miglioreFrequenzeBluetooth = dammiIlMigliore(hashMapFrequenzeBluetooth , "frequenzeBluetooth");
                 textFrequenzeBluetooth.setText("Bluetooth : " + miglioreFrequenzeBluetooth);
             }
 
             boolean frequenzeCell = (boolean) decisioni.get("NetWork");
             if (frequenzeCell){
                 hashMapFrequenzeCell = (HashMap) bundle.getSerializable("hashMapFrequenzeCell");
-                String miglioreFrequenzeBluetooth = dammiIlMigliore(hashMapFrequenzeCell);
+                int o=0;
+                o++;
+                String miglioreFrequenzeBluetooth = dammiIlMigliore(hashMapFrequenzeCell , "frequenzeCell");
                 textFrequenzeCell.setText("NetWork : " + miglioreFrequenzeBluetooth);
             }
 
-
+            boolean both = (boolean) decisioni.get("both");
+            if(both){
+                    calcolaIlMigliore();
+                }
         }
-/*
-        boolean both = (boolean) decisioni.get("both");
-        if(nomi == true){
-            boolean bothWifi = (boolean) decisioni.get("WiFi");
-            boolean bothBluetootk = (boolean) decisioni.get("Bluetootk");
-        }*/
+
+
 
 
     }
 
-    private String dammiIlMigliore(HashMap hashMapNomiMetodoUniversale) {
+    private void calcolaIlMigliore() {
+        for (int i=0 ; i < bothList.size() ; i++){
+            OggettoBoth appoggio = (OggettoBoth) bothList.get(i);
+            double ins = (double) totAnalisi;
+            appoggio.decrementaMedia(ins);
+        }
+        visualizzaIlMigliore();
+    }
+
+    private void visualizzaIlMigliore() {
+        String bestAlgoritmo = null;
+        String bestRp = null;
+        double erroreMax = 0; // deve essere il più ALTO possibile
+        for (int i=0 ; i < bothList.size(); i++){
+            OggettoBoth appoggio = (OggettoBoth) bothList.get(i);
+            if (i==0){
+                bestAlgoritmo = appoggio.getAlgoritmo();
+                bestRp = appoggio.getRp();
+                erroreMax = appoggio.getFrequenzaDecrementata();
+            }else {
+                double erroreMaxAppoggio = appoggio.getFrequenzaDecrementata();
+                if (erroreMax < erroreMaxAppoggio){
+                    bestAlgoritmo = appoggio.getAlgoritmo();
+                    bestRp = appoggio.getRp();
+                    erroreMax = appoggio.getFrequenzaDecrementata();
+                }
+            }
+        }
+
+        textAlgoBest.setText("L'algoritmo con meno errore è : " + bestAlgoritmo);
+        textAlgoBestFrequenze.setText("La posizione è : " + bestRp);
+
+
+    }
+
+    private String dammiIlMigliore(HashMap hashMapNomiMetodoUniversale , String algoritmo) {
         String best = null;
         int registro = 0;
         LinkedList prov = new LinkedList();
@@ -113,6 +165,7 @@ public class Visualizzazione extends AppCompatActivity {
         }
         for (int i=0 ; i < hashMapNomiMetodoUniversale.size(); i++){
             int intProvvisorio = (int) hashMapNomiMetodoUniversale.get(prov.get(i));
+            totAnalisi = totAnalisi + intProvvisorio;
             if (i==0){
                 best = (String) prov.get(i);
                 registro = intProvvisorio;
@@ -123,7 +176,10 @@ public class Visualizzazione extends AppCompatActivity {
                 }
             }
         }
-
+        OggettoBoth oggettoBoth = new OggettoBoth(registro , best , algoritmo);
+        bothList.add(oggettoBoth);
+        int i=0;
+        i++;
         return best;
     }
 }
