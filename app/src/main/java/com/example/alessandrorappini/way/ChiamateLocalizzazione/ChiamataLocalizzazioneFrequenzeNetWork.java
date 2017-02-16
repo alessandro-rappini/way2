@@ -62,7 +62,7 @@ public class ChiamataLocalizzazioneFrequenzeNetWork {
             try {
                 int successo = json.getInt("successo");
                 if (successo == 1) {
-                    Log.i("---------","-------");
+                    Log.i("---------","-------");Log.i("---------","-------");Log.i("---------","-------");
                     Log.i("info" , "risposta");
                     rpRisp = json.getJSONArray("arrayCompresso");
                     myMap = new HashMap<String, Integer>();
