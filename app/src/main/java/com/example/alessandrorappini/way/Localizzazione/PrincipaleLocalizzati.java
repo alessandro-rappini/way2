@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeBluetooth;
+import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeBoth;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeNetWork;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneFrequenzeWifi;
 import com.example.alessandrorappini.way.ChiamateLocalizzazione.ChiamataLocalizzazioneNomiBluetooth;
@@ -31,6 +32,7 @@ import com.example.alessandrorappini.way.Oggetti.Wifi.WifiCheif;
 import com.example.alessandrorappini.way.Oggetti.Wifi.WifiObj;
 import com.example.alessandrorappini.way.R;
 import com.example.alessandrorappini.way.Server.Setpath;
+import com.example.alessandrorappini.way.Utilities.OggBoth;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -75,6 +77,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     static boolean attesaBlue= true;
     static boolean attesaNet= false;
 
+    static int lungStabile;
 
     static LinkedList wifiCompressi ;
     static LinkedList bluetoothCompressi ;
@@ -86,6 +89,8 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     //array per invio dati //ssid //bssid // rssidMedia //rssidVarianza ******* Bluetooth
     static LinkedList  deviceBluetooth = new LinkedList();
     static LinkedList  rssiBluetooth = new LinkedList();
+    //
+    static int mediaNetWork;
     //dialog
     static ProgressDialog dialog;
     //PatterMatch nomi
@@ -94,6 +99,8 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     static  HashMap hashMapFrequenzeWifi = null;
     static  HashMap hashMapFrequenzeBluetooth = null;
     static  HashMap hashMapFrequenzeCell = null;
+    static  OggBoth frequenzeBoth = null;
+    static  HashMap hashMapFrequenzeBoth = null;
 
     //Boolean Controllo
     //nomi
@@ -257,7 +264,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                 }else {
                     generaleAnalisi.put("Bluetootk" , false) ;
                 }
-                ///////svegliati
+
                 if (checkBoxNetWork.isChecked()) {
                     generaleAnalisi.put("NetWork" , true) ;
                     frequenzeCell = false;
@@ -267,6 +274,8 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                 }else {
                     generaleAnalisi.put("NetWork" , false) ;
                 }
+
+
 
                 if (selectedDialog== true){
                  dialog = ProgressDialog.show(this, "Analisi", "Attendere prego", true);
@@ -300,7 +309,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
     }
 
     public static void prendiDatiNetWork() {
-        int mediaNetWork = netWorkCheif.getMediaNetWork();
+        mediaNetWork = netWorkCheif.getMediaNetWork();
         String nome = spEdificio.getSelectedItem().toString();
         ChiamataLocalizzazioneFrequenzeNetWork chiamataLocalizzazioneFrequenzeNetWork =new ChiamataLocalizzazioneFrequenzeNetWork(mediaNetWork , nome);
 
@@ -334,6 +343,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
     private static void creaArrayWifi() {
         int lung = wifiCompressi.size();
+        lungStabile = lung;
         for (int i = 0; i < wifiCompressi.size(); i++) {
             WifiObj appoggio = (WifiObj) wifiCompressi.get(i);
 
@@ -392,7 +402,31 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             //generaleAnalisi --> la mappa con dentro i valori che l'utente ha deciso di visualizzare
             //hashMapNomiBluetooth  --> mappa con dentro i nomi rilevati dalla frequenza bluetooth
             //hashMapNomiWifi --> mappa con dentro i nomi rilevati dalla frequenza bluetooth
-            Log.i("info" , "ABBIAMO FINITOOOOOOOOOOO");
+
+            //WiFi Bluetootk NetWork
+            if(generaleAnalisi.get("both") && generaleAnalisi.get("WiFi") && generaleAnalisi.get("Bluetootk") && generaleAnalisi.get("NetWork")){
+                    //facccio l'analisi
+                    // poi mando via
+                    Log.i("info" , "faccio l'analisi");
+                    String nome = spEdificio.getSelectedItem().toString();
+                    ChiamataLocalizzazioneFrequenzeBoth chiamataLocalizzazioneFrequenzeBoth = new ChiamataLocalizzazioneFrequenzeBoth(nome , ssid , bssid , rssidMedia , deviceBluetooth , rssiBluetooth , mediaNetWork , lungStabile);
+                   // mandaVia();
+            }else  {
+                    mandaVia();
+            }
+
+        }
+
+    }
+
+    public static synchronized    void inserisciHasMapFrequenzeBoth(OggBoth map){
+        frequenzeBoth = map;
+        mandaVia();
+
+    }
+
+    private static void mandaVia() {
+        {Log.i("info" , "ABBIAMO FINITOOOOOOOOOOO");
             Bundle  bundle = new Bundle();
             bundle.putSerializable("generaleAnalisi" , (Serializable) generaleAnalisi);
             bundle.putSerializable("hashMapNomiBluetooth" ,  hashMapNomiBluetooth);
@@ -400,13 +434,12 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
             bundle.putSerializable("hashMapFrequenzeWifi" ,  hashMapFrequenzeWifi);
             bundle.putSerializable("hashMapFrequenzeBluetooth" ,  hashMapFrequenzeBluetooth);
             bundle.putSerializable("hashMapFrequenzeCell" ,  hashMapFrequenzeCell);
+            bundle.putSerializable("hashMapFrequenzeBoth" , (OggBoth) frequenzeBoth);
             dialog.dismiss();
             Context c = getAppContext();
             Intent intent = new Intent(c , Visualizzazione.class);
             intent.putExtras(bundle);
-            c.startActivity(intent);
-        }
-
+            c.startActivity(intent);}
     }
 
     public static Context getAppContext(){

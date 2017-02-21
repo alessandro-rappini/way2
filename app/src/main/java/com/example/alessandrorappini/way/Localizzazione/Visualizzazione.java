@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.example.alessandrorappini.way.MainActivity;
 import com.example.alessandrorappini.way.R;
-import com.example.alessandrorappini.way.Utilities.OggettoBoth;
+import com.example.alessandrorappini.way.Utilities.OggBoth;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +23,8 @@ public class Visualizzazione extends AppCompatActivity {
     static  HashMap hashMapFrequenzeWifi = null;
     static  HashMap hashMapFrequenzeBluetooth = null;
     static  HashMap hashMapFrequenzeCell = null;
+    //static  HashMap hashMapFrequenzeBoth = null;
+    static OggBoth oggBoth;
     static Bundle bundle;
     static int totAnalisi;
 
@@ -112,7 +114,11 @@ public class Visualizzazione extends AppCompatActivity {
 
             boolean both = (boolean) decisioni.get("both");
             if(both){
-                    calcolaIlMigliore();
+                    oggBoth = (OggBoth) bundle.getSerializable("hashMapFrequenzeBoth");
+                    textAlgoBest.setText("L'algoritmo migliore è : " + oggBoth.getAlgortimo());
+                    textAlgoBestFrequenze.setText("La posizione è : " + oggBoth.getRp());
+                   // calcolaIlMigliore();
+
                 }
         }
 
@@ -121,16 +127,16 @@ public class Visualizzazione extends AppCompatActivity {
 
     }
 
-    private void calcolaIlMigliore() {
+ /*   private void calcolaIlMigliore() {
         for (int i=0 ; i < bothList.size() ; i++){
             OggettoBoth appoggio = (OggettoBoth) bothList.get(i);
             double ins = (double) totAnalisi;
             appoggio.decrementaMedia(ins);
         }
         visualizzaIlMigliore();
-    }
+    }*/
 
-    private void visualizzaIlMigliore() {
+   /* private void visualizzaIlMigliore() {
         String bestAlgoritmo = null;
         String bestRp = null;
         double erroreMax = 0; // deve essere il più ALTO possibile
@@ -154,7 +160,7 @@ public class Visualizzazione extends AppCompatActivity {
         textAlgoBestFrequenze.setText("La posizione è : " + bestRp);
 
 
-    }
+    }*/
 
     private String dammiIlMigliore(HashMap hashMapNomiMetodoUniversale , String algoritmo) {
         String best = null;
@@ -176,10 +182,10 @@ public class Visualizzazione extends AppCompatActivity {
                 }
             }
         }
-        OggettoBoth oggettoBoth = new OggettoBoth(registro , best , algoritmo);
-        bothList.add(oggettoBoth);
-        int i=0;
-        i++;
+        /*OggettoBoth oggettoBoth = new OggettoBoth(registro , best , algoritmo);
+        bothList.add(oggettoBoth);*/
+
+
         return best;
     }
 }
