@@ -19,7 +19,8 @@ import java.util.List;
 import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo.jsonParser;
 
 /**
- * Created by Alessandro Rappini on 10/02/2017.
+ * Classe che effettua la chiamata al file PHP che ritorna
+ * la posizione del device in base alle frequenze della rete cellulare
  */
 
 public class ChiamataLocalizzazioneFrequenzeNetWork {
@@ -39,7 +40,6 @@ public class ChiamataLocalizzazioneFrequenzeNetWork {
         }
 
         protected String doInBackground(String... args) {
-
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             //nome palazzina
@@ -47,7 +47,6 @@ public class ChiamataLocalizzazioneFrequenzeNetWork {
             Log.i("nome" , nomeR);
             params.add(new BasicNameValuePair("frequenza" ,  String.valueOf(frequenzaR)));
             Log.i("frequenza" , frequenzaR + "");
-
 
             // creo il path
             Setpath setpath = new Setpath();
@@ -67,6 +66,7 @@ public class ChiamataLocalizzazioneFrequenzeNetWork {
                     rpRisp = json.getJSONArray("arrayCompresso");
                     myMap = new HashMap<String, Integer>();
                     for (int i = 0; i < rpRisp.length(); i = i+2 ) {
+                        //crea la mappa
                         String nomerp = rpRisp.get(i).toString();
                         int value = Integer.parseInt(rpRisp.get(i+1).toString());
                         Log.i("nome" , nomerp);

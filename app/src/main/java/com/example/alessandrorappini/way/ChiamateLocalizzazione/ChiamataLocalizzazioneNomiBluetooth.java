@@ -20,7 +20,8 @@ import java.util.List;
 import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo.jsonParser;
 
 /**
- * Created by Alessandro Rappini on 08/02/2017.
+ * Classe che effettua la chiamata al file PHP che ritorna
+ * la posizione del device in base al confronto dei nomi delle rilevazioni Bluetooth
  */
 
 public class ChiamataLocalizzazioneNomiBluetooth {
@@ -43,7 +44,6 @@ public class ChiamataLocalizzazioneNomiBluetooth {
         }
 
         protected String doInBackground(String... args) {
-
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("nome", nomeR));
@@ -52,8 +52,6 @@ public class ChiamataLocalizzazioneNomiBluetooth {
                 Log.i("inserisco dev Blue -->" , (String ) deviceBluetoothR.get(i));
                 //ssid //bssid // rssidMedia //rssidVarianza
                 params.add(new BasicNameValuePair("typeDevice[]", (String) deviceBluetoothR.get(i)));
-                //params.add(new BasicNameValuePair("typeBssid[]", (String) bssid.get(i)));
-                //params.add(new BasicNameValuePair("typeRssidMedia[]", (String) rssidMedia.get(i)));
             }
 
             // creo il path
@@ -71,6 +69,7 @@ public class ChiamataLocalizzazioneNomiBluetooth {
                 if (successo == 1) {
                     Log.i("---------","-------");
                     Log.i("info" , "risposta");
+                    //creo la mappa
                     rpRisp = json.getJSONArray("arrayCompresso");
                     myMapBlue = new HashMap<String, Integer>();
                     for (int i = 0; i < rpRisp.length(); i = i+2 ) {

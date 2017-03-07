@@ -21,19 +21,26 @@ import java.util.List;
 import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo.jsonParser;
 
 /**
- * Created by Alessandro Rappini on 16/02/2017.
+ * Classe che effettua le chiamate ai due file PHP che si occupano di di analizzare
+ * le frequenze rilevate calcolandogli sonopra la penalità.
+ * la chiamate sono due :
+ * -    controllaMisurazioniFrequenzeWifiBoth --> si occupa del Wifi
+ * -    controllaMisurazioniFrequenzeBluetoothBoth --> si occupa del Bluetooth
+ *
+ *  le due classi asincrone creano entrambe una mappa chiave valore
+ *  al termine della classe asincrona, quando il metodo arriva al post execute le classi chiamano il metodo : chaimaLaFine
+ *  il metodo "chaimaLaFine" richiama "calcoloIlMiglioreNelVettore" che si occuperà di calcolare qual'è ri possibile
+ *  risultato ottimo.
+ *
  */
 
 public class ChiamataLocalizzazioneFrequenzeBoth {
     static boolean attessaWifi = true , attessaBlue = true ;
-
     static LinkedList listaOggettiBest ;
-
     static String nomeR;
     static int mediaNetWorkR , lungR;
     static LinkedList ssidR , bssidR , rssidMediaR , deviceBluetoothR , rssiBluetoothR ;
-
-    static JSONArray rpRispWifi = null , rpRispBlue = null ,rpRispNetWork = null ;
+    static JSONArray rpRispWifi = null , rpRispBlue = null;
     static HashMap<String, Double> myMapWifi , myMapBlue ;
 
     public   ChiamataLocalizzazioneFrequenzeBoth(String nome , LinkedList ssid , LinkedList bssid , LinkedList rssidMedia ,LinkedList deviceBluetooth ,LinkedList rssiBluetooth , int mediaNetWork , int lung){
@@ -51,19 +58,20 @@ public class ChiamataLocalizzazioneFrequenzeBoth {
     private void avvia() {
         new controllaMisurazioniFrequenzeWifiBoth().execute();
         new controllaMisurazioniFrequenzeBluetoothBoth().execute();
-        //new controllaMisurazioniFrequenzeNeTWorkBoth().execute();
     }
 
     private static void chaimaLaFine() {
         if(attessaWifi == false && attessaBlue == false ){
             listaOggettiBest = new LinkedList();
-            /* calcolo il quello con l'errore più basso  sia wifi che bluetooth*/
-            //WIFI
             Log.i("info","inizio a chimare wifi");
             calcolaIlMiglioreWifi();
-
         }
     }
+
+    /*
+    calcolo il quello con l'errore più basso  sia wifi che bluetooth
+    il  vettore ha la stessa forma in entrambe le misurazioni
+    */
 
     private static void calcoloIlMiglioreNelVettore() {
         String best = null;
@@ -87,6 +95,7 @@ public class ChiamataLocalizzazioneFrequenzeBoth {
         PrincipaleLocalizzati.inserisciHasMapFrequenzeBoth(miglire);
     }
 
+    // calcola il migliore nel Bluetooth
     private static void calcolaIlMiglioreBlue() {
         LinkedList prov = new LinkedList();
         String best = null;
@@ -111,6 +120,7 @@ public class ChiamataLocalizzazioneFrequenzeBoth {
         calcoloIlMiglioreNelVettore();
     }
 
+    //Calcola il migliore nel WiFi
     private static void calcolaIlMiglioreWifi() {
         LinkedList prov = new LinkedList();
         String best = null;
@@ -136,13 +146,12 @@ public class ChiamataLocalizzazioneFrequenzeBoth {
 
     }
 
-
+    //effettua la chiamata PHP al fine di analisi del WiFi
     private static class controllaMisurazioniFrequenzeWifiBoth extends AsyncTask<String, String, String> {
         public controllaMisurazioniFrequenzeWifiBoth( ) {
 
         }
         protected String doInBackground(String... args) {
-
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             //nome palazzina
@@ -169,6 +178,7 @@ public class ChiamataLocalizzazioneFrequenzeBoth {
                     rpRispWifi = json.getJSONArray("arrayCompresso");
                     myMapWifi = new HashMap<String, Double>();
                     for (int i = 0; i < rpRispWifi.length(); i = i+2 ) {
+                        //creazione della mappa
                         String nomerp = rpRispWifi.get(i).toString();
                         double value = Double.parseDouble(rpRispWifi.get(i+1).toString());
                         Log.i("nome" , nomerp);
@@ -194,20 +204,17 @@ public class ChiamataLocalizzazioneFrequenzeBoth {
 
     }
 
+    //effettua la chiamata PHP al fine di analisi del Bluetooth
     private static class controllaMisurazioniFrequenzeBluetoothBoth extends AsyncTask<String, String, String> {
         public controllaMisurazioniFrequenzeBluetoothBoth( ) {
-
         }
         protected String doInBackground(String... args) {
-
             //creo la lista con tutti i parametri
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             //nome palazzina
             params.add(new BasicNameValuePair("nome", nomeR));
 
-            //for (int i = 0; i < lungR; i++) {
             for (int i = 0; i < deviceBluetoothR.size(); i++) {
-
                 //ssid //bssid // rssidMedia //rssidVarianza
                 Log.i("typeDevice" , (String) deviceBluetoothR.get(i));
                 params.add(new BasicNameValuePair("typeDevice[]", (String) deviceBluetoothR.get(i)));
@@ -233,6 +240,7 @@ public class ChiamataLocalizzazioneFrequenzeBoth {
                     rpRispBlue = json.getJSONArray("arrayCompresso");
                     myMapBlue = new HashMap<String, Double>();
                     for (int i = 0; i < rpRispBlue.length(); i = i+2 ) {
+                        //creazione della mappa
                         String nomerp = rpRispBlue.get(i).toString();
                         double value = Double.parseDouble(rpRispBlue.get(i+1).toString());
                         Log.i("nome" , nomerp);

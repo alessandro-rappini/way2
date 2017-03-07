@@ -19,8 +19,10 @@ import java.util.List;
 
 import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo.jsonParser;
 
+
 /**
- * Created by Alessandro Rappini on 08/02/2017.
+ * Classe che effettua la chiamata al file PHP che ritorna
+ * la posizione del device in base al confronto dei nomi delle rilevazioni WiFi
  */
 
 public class ChiamataLocalizzazioneNomiWifi {
@@ -33,10 +35,8 @@ public class ChiamataLocalizzazioneNomiWifi {
         ssidR = ssid;
         bssidR = bssid;
         rssidMediaR = rssidMedia;
-
         nomeR = nome;
         lungR =lung;
-
         new controllaMisurazioniWifi().execute();
     }
 
@@ -53,7 +53,6 @@ public class ChiamataLocalizzazioneNomiWifi {
             params.add(new BasicNameValuePair("nome", nomeR));
 
             for (int i = 0; i < lungR; i++) {
-
                 //ssid //bssid // rssidMedia //rssidVarianza
                 Log.i("typeBssid" , (String) bssidR.get(i));
                 params.add(new BasicNameValuePair("typeBssid[]", (String) bssidR.get(i)));
@@ -79,6 +78,7 @@ public class ChiamataLocalizzazioneNomiWifi {
                     rpRisp = json.getJSONArray("arrayCompresso");
                     myMap = new HashMap<String, Integer>();
                     for (int i = 0; i < rpRisp.length(); i = i+2 ) {
+                        //creo la mappa
                         String nomerp = rpRisp.get(i).toString();
                         int value = Integer.parseInt(rpRisp.get(i+1).toString());
                         Log.i("nome" , nomerp);

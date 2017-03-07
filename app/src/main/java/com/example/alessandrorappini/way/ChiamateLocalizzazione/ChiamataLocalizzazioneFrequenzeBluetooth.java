@@ -20,23 +20,19 @@ import java.util.List;
 import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo.jsonParser;
 
 /**
- * Created by Alessandro Rappini on 10/02/2017.
+ * Classe che effettua la chiamata al file PHP che ritorna
+ * la posizione del device in base alle frequenze del Bluetooth
  */
 
 public class ChiamataLocalizzazioneFrequenzeBluetooth {
     static LinkedList deviceBluetoothR , rssiBluetoothR ;
-    //static int lungR;
     static String nomeR;
     static JSONArray rpRisp = null;
     static HashMap<String, Integer> myMap ;
     public ChiamataLocalizzazioneFrequenzeBluetooth(LinkedList deviceBluetooth, LinkedList rssiBluetooth, String nome){
         deviceBluetoothR = deviceBluetooth;
         rssiBluetoothR = rssiBluetooth;
-        //rssidMediaR = rssidMedia;
-
         nomeR = nome;
-        //lungR =lung;
-
         new controllaMisurazioniFrequenzeBluetooth().execute();
     }
 
@@ -53,7 +49,6 @@ public class ChiamataLocalizzazioneFrequenzeBluetooth {
             //nome palazzina
             params.add(new BasicNameValuePair("nome", nomeR));
 
-            //for (int i = 0; i < lungR; i++) {
             for (int i = 0; i < deviceBluetoothR.size(); i++) {
 
                 //ssid //bssid // rssidMedia //rssidVarianza
@@ -81,6 +76,7 @@ public class ChiamataLocalizzazioneFrequenzeBluetooth {
                     rpRisp = json.getJSONArray("arrayCompresso");
                     myMap = new HashMap<String, Integer>();
                     for (int i = 0; i < rpRisp.length(); i = i+2 ) {
+                        // creo la mappa
                         String nomerp = rpRisp.get(i).toString();
                         int value = Integer.parseInt(rpRisp.get(i+1).toString());
                         Log.i("nome" , nomerp);
