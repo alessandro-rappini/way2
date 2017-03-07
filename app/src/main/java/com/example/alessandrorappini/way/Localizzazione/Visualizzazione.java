@@ -13,6 +13,12 @@ import com.example.alessandrorappini.way.Utilities.OggBoth;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+/*
+    Classe che si occupa di visualizzare i risultati ottenuti dalla classe
+    Principale localizzati, in base alla decisione dell'unte tutte pre caricate
+    in un bundle la classe le analizza e le mostra
+ */
+
 public class Visualizzazione extends AppCompatActivity {
 
     static TextView textNomiWifi , textNomiBluetooth , textFrequenzeWifi ,textFrequenzeBluetooth ,textFrequenzeCell , textAlgoBest , textAlgoBestFrequenze ;
@@ -23,7 +29,7 @@ public class Visualizzazione extends AppCompatActivity {
     static  HashMap hashMapFrequenzeWifi = null;
     static  HashMap hashMapFrequenzeBluetooth = null;
     static  HashMap hashMapFrequenzeCell = null;
-    //static  HashMap hashMapFrequenzeBoth = null;
+
     static OggBoth oggBoth;
     static Bundle bundle;
     static int totAnalisi;
@@ -38,13 +44,6 @@ public class Visualizzazione extends AppCompatActivity {
         bundle = this.getIntent().getExtras();
 
         decisioni = (HashMap) bundle.getSerializable("generaleAnalisi");
-        /*
-        hashMapNomiWifi = (HashMap) bundle.getSerializable("hashMapNomiWifi");
-        hashMapNomiBluetooth = (HashMap) bundle.getSerializable("hashMapNomiBluetooth");
-        hashMapFrequenzeWifi = (HashMap) bundle.getSerializable("hashMapFrequenzeWifi");
-        hashMapFrequenzeBluetooth = (HashMap) bundle.getSerializable("hashMapFrequenzeBluetooth");
-        */
-
         textNomiWifi = (TextView)findViewById(R.id.NomiWifi);
         textNomiBluetooth = (TextView)findViewById(R.id.NomiBluetooth);
         textFrequenzeWifi = (TextView)findViewById(R.id.frequenzeWifi);

@@ -49,6 +49,16 @@ import java.util.Map;
 
 import static com.example.alessandrorappini.way.Misurazioni.Misurazioni.Wifi.WifiAlgo.jsonParser;
 
+    /*
+        Classe utilizzare per acquisire le preferenze dell'utente sul fatto di come
+        intende localizzarsi, quali tecnologie usare e quele tipo di algoritmo utilizzare
+        questa classe istanzia gli oggetti che effettuano le rilevazioni e gli oggetti
+        che si occupano di richiamare i file PHP di contronto.
+        La prima cosa che la classe fa è popolare lo spinner, il quale all'interno ci andranno il
+        nome di tutti gli edifici.
+
+     */
+
 public class PrincipaleLocalizzati extends AppCompatActivity {
 
     public static Context con;
@@ -226,6 +236,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         if(!checkBoxNomi.isChecked() && !checkBoxFrequenze.isChecked() && !checkBoxBoth.isChecked()){
             Toast.makeText(PrincipaleLocalizzati.this, "Seleziona almeno un pattern di analisi", Toast.LENGTH_LONG).show();
         }else{
+                // crea la mappa con deltro le preferenze dell'utente su quale algoritmo utilizzare
                 generaleAnalisi= new HashMap<>();
                 if(checkBoxNomi.isChecked()){
                     generaleAnalisi.put("nomi" , true) ;
@@ -242,12 +253,13 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                 }else {
                     generaleAnalisi.put("both" , false) ;
                 }
-
+                // rileva le preferenze dell'utente su quali tecnologie usare
                 if (checkBoxWIFI.isChecked()) {
                     generaleAnalisi.put("WiFi" , true) ;
                     //localWifi = true;
                     nomiWifi = false;
                     frequenzeWifi = false;
+                    //istanzio l'oggetto resposabile delle analisi wifi
                     cheifWifi = new WifiCheif(precisione , con , inte , "localizzazione");
                     selectedDialog = true;
                 }else {
@@ -258,6 +270,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                     generaleAnalisi.put("Bluetootk" , true) ;
                     nomiBlue = false;
                     frequenzeBlue = false;
+                    // istanzio l'oggetto responsabile dell'analisi del bluetooth
                     bluetoohCheif = new BluetoothCheif(precisione , con , inte  , "localizzazione");
                     //localBlue = true;
                     selectedDialog = true;
@@ -268,14 +281,13 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                 if (checkBoxNetWork.isChecked()) {
                     generaleAnalisi.put("NetWork" , true) ;
                     frequenzeCell = false;
+                    //istanzio l'oggetto responsabile delle rilevazioni delle rete cellulare
                     netWorkCheif = new NetWorkCheif(precisione , con , inte  , "localizzazione");
                     //localBlue = true;
                     selectedDialog = true;
                 }else {
                     generaleAnalisi.put("NetWork" , false) ;
                 }
-
-
 
                 if (selectedDialog== true){
                  dialog = ProgressDialog.show(this, "Analisi", "Attendere prego", true);
@@ -285,48 +297,50 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         }
     }
 
+    //inserisco le rilevazioni del WiFi dentro la lista dell'oggetto istazianto mediante l'apposito metodo
     public synchronized  static  void inserisciCheifWiFiLocalizzazione(LinkedList lista){
         cheifWifi.inserisci(lista);
     }
-
+    //inserisco le rilevazioni del Bluetooth dentro la lista dell'oggetto istazianto mediante l'apposito metodo
     public synchronized  static  void inserisciCheifBlueLocalizzazione(LinkedList lista){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             bluetoohCheif.inserisci(lista);
         }
     }
-
+    //inserisco le rilevazioni della rete cellulare dentro la lista dell'oggetto istazianto mediante l'apposito metodo
     public synchronized  static  void inserisciCheifNetWordLocalizzazione(int value){
         netWorkCheif.inserisci(value);
     }
 
+    //comprime i dati
     public static void prendiDatiWifi() {
         CompressoreWifi.inizia(cheifWifi);
     }
-
-
+    //comprime i dati
     public static void prendiDatiBluetooth() {
         CompressoreBluetooth.inizia(bluetoohCheif);
     }
-
+    //comprime i dati
     public static void prendiDatiNetWork() {
         mediaNetWork = netWorkCheif.getMediaNetWork();
         String nome = spEdificio.getSelectedItem().toString();
         ChiamataLocalizzazioneFrequenzeNetWork chiamataLocalizzazioneFrequenzeNetWork =new ChiamataLocalizzazioneFrequenzeNetWork(mediaNetWork , nome);
-
     }
 
+    // indica al sistema che le rilevazioni WiFi sono completate
     public static void attesaWifi(LinkedList<WifiObj> cheifWifiCompresso) {
         wifiCompressi = cheifWifiCompresso;
         attesaWifi = false;
         creaArrayWifi();
     }
-
+    // indica al sistema che le rilevazioni Bluetooth sono completate
     public static void attesaBluetooth(LinkedList<WifiObj> cheifBluetoothCompresso) {
         bluetoothCompressi = cheifBluetoothCompresso;
         attesaBlue = false;
         creaArrayBluetooth();
     }
 
+    //viene creato l'array
     private static void creaArrayBluetooth() {
         String nome = spEdificio.getSelectedItem().toString();
         BluetoothObj appoggio;
@@ -340,7 +354,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         ChiamataLocalizzazioneFrequenzeBluetooth chiamaBluetoothFrequenze = new ChiamataLocalizzazioneFrequenzeBluetooth(deviceBluetooth , rssiBluetooth , nome);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
-
+    //viene creato l'array
     private static void creaArrayWifi() {
         int lung = wifiCompressi.size();
         lungStabile = lung;
@@ -359,43 +373,50 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
-
+    /*
+        metodo richiamato dalla classe ChiamataLocalizzazioneNomiWifi inserire i dati analizzati dentro la mappa
+     */
     public static synchronized    void inserisciHasMapNomiWifi(HashMap map){
         nomiWifi = true;
         hashMapNomiWifi = map;
         fine();
     }
 
+    /*
+        metodo richiamato dalla classe ChiamataLocalizzazioneNomiBluetooth inserire i dati analizzati dentro la mappa
+     */
     public static synchronized    void inserisciHasMapNomiBluetooth(HashMap map){
         nomiBlue = true;
         hashMapNomiBluetooth = map;
         fine();
     }
 
+    /*
+      metodo richiamato dalla classe ChiamataLocalizzazioneFrequenzeWifi inserire i dati analizzati dentro la mappa
+     */
     public static synchronized    void inserisciHasMapFrequenzeWifi(HashMap map){
         frequenzeWifi = true;
         hashMapFrequenzeWifi = map;
         fine();
     }
 
+    /*
+      metodo richiamato dalla classe ChiamataLocalizzazioneFrequenzeBluetooth inserire i dati analizzati dentro la mappa
+     */
     public static synchronized    void inserisciHasMapFrequenzeBluetooth(HashMap map){
         frequenzeBlue = true;
         hashMapFrequenzeBluetooth = map;
         fine();
     }
-
+    /*
+      metodo richiamato dalla classe ChiamataLocalizzazioneFrequenzeNetWork inserire i dati analizzati dentro la mappa
+     */
     public static synchronized    void inserisciHasMapFrequenzeNetWork(HashMap map){
         frequenzeCell = true;
         hashMapFrequenzeCell = map;
         fine();
     }
 
-/*
-    public synchronized  static  void inserisciHasMapFrequenzeBluetooth(HashMap map){
-        frequenzeBlue = true;
-        hashMapNomiBluetooth = map;
-        fine();
-    }*/
 
      synchronized static void fine() {
         if (nomiWifi == true && nomiBlue == true && frequenzeWifi == true && frequenzeBlue == true && frequenzeCell == true){
@@ -410,7 +431,7 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
                     Log.i("info" , "faccio l'analisi");
                     String nome = spEdificio.getSelectedItem().toString();
                     ChiamataLocalizzazioneFrequenzeBoth chiamataLocalizzazioneFrequenzeBoth = new ChiamataLocalizzazioneFrequenzeBoth(nome , ssid , bssid , rssidMedia , deviceBluetooth , rssiBluetooth , mediaNetWork , lungStabile);
-                   // mandaVia();
+
             }else  {
                     mandaVia();
             }
@@ -419,14 +440,22 @@ public class PrincipaleLocalizzati extends AppCompatActivity {
 
     }
 
+    /*
+      metodo richiamato dalla classe ChiamataLocalizzazioneFrequenzeBothk inserire i dati analizzati dentro la mappa
+     */
+
     public static synchronized    void inserisciHasMapFrequenzeBoth(OggBoth map){
         frequenzeBoth = map;
         mandaVia();
 
     }
 
+    /*
+        crea un bundle contente tutte le preferenze dell'utente e le manda alla classe PrincipaleLcalizzati
+        in modo tale che sappia cosa l'utente ha richiesto
+     */
     private static void mandaVia() {
-        {Log.i("info" , "ABBIAMO FINITOOOOOOOOOOO");
+        {Log.i("info" , "fine");
             Bundle  bundle = new Bundle();
             bundle.putSerializable("generaleAnalisi" , (Serializable) generaleAnalisi);
             bundle.putSerializable("hashMapNomiBluetooth" ,  hashMapNomiBluetooth);
